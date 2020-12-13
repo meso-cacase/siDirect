@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang=en>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="author" content="Yuki Naito et al.">
+<title>siDirect</title>
+<style type="text/css">
+<!--
+/* font */
+	* { font-family:verdana,arial,helvetica,sans-serif }
+	p,ul,ol,h4 { font-size:8pt }
+	.u { background-color:#FF99FF }
+	.r { background-color:#66FFFF }
+	.a { background-color:#99FF00 }
+/* hyperlink */
+	a:link,a:visited {
+		text-decoration:none;
+		color:#004080;
+	}
+	a:hover {
+		text-decoration:none;
+		color:red;
+	}
+-->
+</style>
+</head>
+
+<body>
+
+<a href="/"><img src="ocean.jpg" height=80 width="100%" border=0></a>
+<div><font size=5>siDirect </font><font size=4>version 2.0</font></div>
+
+<hr><!-- __________________________________________________ -->
+
+
+<h3>About siDirect 2.0</h3>
+
+<p>siDirect 2.0 is a web server for providing efficient and target-specific siRNA design for mammalian RNAi. In this new version, the siRNA design algorithm has been extensively updated to eliminate off-target silencing effects by reflecting our recent finding that the capability of siRNA to induce off-target effect is highly correlated to the thermodynamic stability of the 'seed' duplex (<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/36/22/7100">reference 6</a>). The updated siRNA design algorithm based on such mechanistic features is combined with the reliable algorithms previously reported.</p>
+
+<h3>Examples</h3>
+
+<h4>Example 1 | Designing siRNAs for human claudin 17 (CLDN17)</h4>
+
+<ol>
+	<li>Enter the accession number for human claudin 17 (NM_012131).
+	<li>Click 'retrieve sequence' to get nucleotide sequence from GenBank.
+	<li>Or you can directly paste in a nucleotide sequence.<br>
+		Accepted input types are FASTA or plain nucleotide sequence up to 10 kbp.
+	<li>Click 'design siRNA'.
+</ol>
+
+<img src="CLDN17_top.gif">
+
+<ol start=5>
+	<li>Results:
+	<ol type=A>
+		<li>siRNA target positions.
+		<li>siRNA target sequences (21nt + 2nt overhang) with links to the off-target list.
+		<li>siRNA efficacy predictions. siRNAs with <font class=u>U</font>, <font class=r>R</font>, <font class=a>A</font> satisfies functional siRNA design algorithms of <a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/32/3/936">Ui-Tei <i>et al.</i> (reference 3)</a>, <a target="_blank" href="http://dx.doi.org/10.1038/nbt936">Reynolds <i>et al.</i> (reference 4)</a> and <a target="_blank" href="http://linkinghub.elsevier.com/retrieve/pii/S0006291X04004425">Amarzguioui <i>et al.</i> (reference 5)</a>, respectively.
+		<li>Homology search results against human mRNAs. Number of hits with complete match (<i>i.e.</i>, 19/19 matches), one mismatch (18/19 matches), two mismatches (17/19 matches) or three mismatches (16/19 matches) are shown. The number '1' in the 0(+) column usually indicates a complete match against intended target mRNA (<i>e.g.</i>, claudin 17).
+		<li>Calculated Tm of the siRNA seed region. Selecting an siRNA with lower seed Tm reduces off-target effects. &rarr; <a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/36/22/7100">Ui-Tei <i>et al.</i> (reference 6)</a>
+		<li>Graphical view of designed siRNAs. Click each siRNA to show off-target list.
+		<li>Tab-delimited siRNA list. You can copy-paste result into Excel or text editors, etc. 
+	</ol>
+</ol>
+
+<img src="CLDN17_result.gif">
+
+<ol start=6>
+	<li>siRNA informations.
+	<li>List of off-target candidates for individual siRNA. The alignment between each off-target candidate and the siRNA sequence clarifies the locations of mismatches. Hits with complete match (<i>i.e.</i>, 19/19 matches), one mismatch (18/19 matches), two mismatches (17/19 matches) or three mismatches (16/19 matches) are shown.
+	<ol type=A>
+	</ol>
+</ol>
+
+<img src="CLDN17_offlist.gif">
+
+<ol start=8>
+	<li>Design sense/antisense RNA oligonucleotides from siDirect result.
+</ol>
+
+<img src="target2si.gif">
+
+<h4>Example 2 | Designing shRNA vectors (with pol III promoter) for human vimentin (VIM)</h4>
+
+<ol>
+	<li>Enter the accession number for human vimentin (NM_003380).
+	<li>Click 'retrieve sequence' to get nucleotide sequence from GenBank.
+	<li>Or you can directly paste in a nucleotide sequence.<br>
+		Accepted input types are FASTA or plain nucleotide sequence up to 10 kbp.
+	<li>Click 'Options: [click here]'.
+	<li>Tick 'Avoid contiguous A's or T's 4 nt or more'.<br>
+		This prevents transcription termination by pol III promoters.
+	<li>Tick 'Custom pattern' and input 'NNGNNNNNNNNNNNNNNNNNNNN' in the field.<br>
+		This fixes the third letter of the target sequence (<i>i.e.</i>, shRNA transcription start) to 'G'.
+	<li>Tick 'Only show siRNAs that match all checked criteria'.
+	<li>Click 'design siRNA'.
+</ol>
+
+<img src="VIM_options.gif">
+
+<ol start=9>
+	<li>Design oligonucleotide sequence from siDirect result.
+</ol>
+
+<img src="VIM_result.gif"><br>
+<img src="target2sh.gif">
+
+<h3>Methods</h3>
+
+<p>
+Overall flow of siRNA selection in siDirect 2.0 is illustrated below. All possible 23-mer subsequences, corresponding to the complementary sequence of 21-nt guide strand and 2-nt 3&prime; overhang of the passenger strand within the target sequence, are generated and filtered in three selection steps.
+</p>
+
+<img src="bmc-fig1_r1.png">
+
+<h4>Step 1: Selection of highly functional siRNAs</h4>
+
+<p>
+In the first step, highly functional siRNA sequences were selected using our algorithm (<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/32/3/936">reference 3</a>). We have revealed that efficient RNAi could be induced by the siRNAs that satisfies the following three sequence conditions simultaneously: A/U at the 5&prime; terminus of the guide strand; G/C at the 5&prime; terminus of the passenger strand; at least 4 A/U residues in the 5&prime; terminal 7 bp of the guide strand. In addition, G/C stretch longer than 9 bp should be absent. The proportion of functional siRNA sequences selected by this algorithm is 14.7% of all human 23-mer sequences generated from RefSeq 30.
+</p>
+
+<h4>Step 2: Reduction of seed-dependent off-target effects</h4>
+
+<p>
+We have found that the off-target effect is highly correlated with the thermodynamic stability or Tm of the seed-target duplex, which is formed between the nucleotides positioned at 2-8 from the 5&prime; end of the siRNA guide strand and its target sequence (<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/36/22/7100">reference 6</a>). In the second step, to avoid off-target effect, Tm for the seed-target duplex was calculated using the nearest neighbor model and the thermodynamic parameters for the formation of RNA duplex. As shown in our previous report, calculated Tm of 21.5 ºC may be a benchmark to discriminate almost off-target-free seed sequences from the off-target-positive ones, and thus used as the initial standard. Furthermore, it has been revealed that RNAi silencing is occasionally induced by the passenger strands of functional siRNAs, and that the passenger strands also take part in the seed-dependent off-target gene silencing. Thus, siRNAs whose seed-target Tm is below 21.5 ºC for both guide and passenger strands were selected in this study. In consequence, 3.0% of all human 23-mer sequences remained available. Calculated Tm value for each siRNA is shown in the siDirect 2.0 output page.
+</p>
+
+<h4>Step 3: Elimination of near-perfect matched genes</h4>
+
+<p>
+Several studies have indicated that the effect of single-base mismatches between the siRNA guide strand and the target mRNA varies, according to the positions of the mismatch and/or the sequence of siRNA. However, it is obvious that even when the Tm value of the seed-target duplex is sufficiently low, the target gene silencing can still take place if the non-seed region is completely complementary. Therefore, in the third step, siRNAs that have near-perfect matches to any other non-targeted transcripts were eliminated. In siDirect 2.0, off-target searches are performed for 19-mer sequences at positions 2-20 of both strands of the siRNA duplex, because these 19 nucleotides are thought to be involved in target mRNA recognition. Since widely-used BLAST tends to overlook near-perfect match candidates frequently, we used our fast and sensitive algorithm (<a target="_blank" href="http://bioinformatics.oxfordjournals.org/cgi/pmidlookup?view=long&pmid=15564304">reference 7</a>). In addition, all of the near-perfect match hits are precomputed for all the functional human siRNAs to accelerate the computational performance. Precomputed results are stored in the memory engine of MySQL database. This makes it possible to return the list of siRNA candidates within a few seconds. The output page includes the minimum number of mismatches against any near-perfect match candidates for each siRNA. By clicking the individual siRNA, a detailed list of candidate genes will appear. By default, siRNA sequences that have at least two mismatches to any other non-targeted transcripts are selected.
+</p>
+
+<h3>Previous releases</h3>
+
+<ul>
+	<li>siDirect web server, May, 2005 <a target="_blank" href="http://genomics.jp/sidirect/">http://genomics.jp/sidirect/</a>
+	<li>siDirect web server, May, 2004 (discontinued)
+</ul>
+
+<h3>References</h3>
+
+<h4>siDirect web server</h4>
+<ol>
+	<li>Naito Y, Yoshimura J, Morishita S, Ui-Tei K. (2009)<br>
+		siDirect 2.0: updated software for designing functional siRNA with reduced seed-dependent off-target effect.<br>
+		<i>BMC Bioinformatics</i> <b>10</b>, 392.
+		<a target="_blank" href="http://www.biomedcentral.com/1471-2105/10/392">[Link]</a>
+	<li>Naito Y, Yamada T, Ui-Tei K, Morishita S, Saigo K. (2004)<br>
+		siDirect: highly effective, target-specific siRNA design software for mammalian RNA interference.<br>
+		<i>Nucleic Acids Res.</i>, <b>32</b>, W124-W129.
+		<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/32/suppl_2/W124">[Link]</a>
+</ol>
+
+<h4>Designing functional siRNAs</h4>
+<ol start=3>
+	<li>Ui-Tei K, Naito Y, Takahashi F, Haraguchi T, Ohki-Hamazaki H, Juni A, Ueda R, Saigo K. (2004)<br>
+		Guidelines for the selection of highly effective siRNA sequences for mammalian and chick RNA interference.<br>
+		<i>Nucleic Acids Res.</i>, <b>32</b>, 936-948.
+		<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/32/3/936">[Link]</a>
+	<li>Reynolds A, Leake D, Boese Q, Scaringe S, Marshall WS, Khvorova A. (2004)<br>
+		Rational siRNA design for RNA interference.<br>
+		<i>Nat. Biotechnol.</i>, <b>22</b>, 326-330.
+		<a target="_blank" href="http://dx.doi.org/10.1038/nbt936">[Link]</a>
+	<li>Amarzguioui M, Prydz H. (2004)<br>
+		An algorithm for selection of functional siRNA sequences.<br>
+		<i>Biochem. Biophys. Res. Commun.</i>, <b>316</b>, 1050-1058.
+		<a target="_blank" href="http://linkinghub.elsevier.com/retrieve/pii/S0006291X04004425">[Link]</a>
+</ol>
+
+<h4>Reducing off-target effects</h4>
+<ol start=6>
+	<li>Ui-Tei K, Naito Y, Nishi K, Juni A, Saigo K. (2008)<br>
+		Thermodynamic stability and Watson-Crick base pairing in the seed duplex are major determinants of the efficiency of the siRNA-based off-target effect.<br>
+		<i>Nucleic Acids Res.</i> <b>36</b>, 7100-7109.
+		<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/36/22/7100">[Link]</a>
+	<li>Yamada T, Morishita S. (2005)<br>
+		Accelerated off-target search algorithm for siRNA.<br>
+		<i>Bioinformatics</i>, <b>21</b>, 1316-1324.
+		<a target="_blank" href="http://bioinformatics.oxfordjournals.org/cgi/pmidlookup?view=long&pmid=15564304">[Link]</a>
+</ol>
+
+<h3>Licenses</h3>
+
+<p>
+Researchers from academic organizations are eligible to freely use siDirect sequences for academic purpose. If users from academic, non-profit, or commercial organizations design or utilize siDirect sequences for any commercial purposes, such as the inclusion to a commercial product sake or profits research, they are required to make licensing agreements by contacting license@rnai.jp.
+</p>
+
+<hr><!-- __________________________________________________ -->
+
+<p><font color=gray>siDirect v.2.0 | Last modified on Jan 1, 2010.</font></p>
+
+</body>
+</html>

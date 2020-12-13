@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang=en>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="author" content="Yuki Naito et al.">
+<title>siDirect</title>
+<style type="text/css">
+<!--
+/* font */
+	* { font-family:verdana,arial,helvetica,sans-serif; font-size:8pt }
+/* hyperlink */
+	a:link,a:visited {
+		text-decoration:none;
+		color:#004080;
+	}
+	a:hover {
+		text-decoration:none;
+		color:red;
+	}
+-->
+</style>
+</head>
+
+<body>
+
+<h4>Minimization of seed-dependent off-target effects</h4>
+
+<p>siDirect selects siRNAs with lower Tm value at the <i>seed</i> region, which contains 7 nucleotides at positions 2-8 from 5&prime; end of the guide strand.</p>
+
+<p>siRNAs down-regulate many unintended genes whose transcripts have complementarities to the siRNA seed region. The capability of siRNA to induce this seed-dependent off-target effect is highly correlated with the thermodynamic stability of the duplex formed between the seed region
+of the siRNA guide strand and its target mRNA. The melting temperature (Tm) for the formation of the seed duplex showed strong correlation with seed-dependent off-target effect.</p>
+
+<div align=center><img src="seedTm_large.gif"></div>
+
+<p>The figure above shows correlation between seed-dependent off-target activity and seed Tm value. All possible 7-nt seed sequences (4^7 = 16,384) were ordered as a function of GC content and Tm. <font color=blue>Blue:</font> pairs of target and siRNA, giving significant off-target effects. <font color=red>Red:</font> pairs of target and siRNA, with little or no off-target effects. See the reference (<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/36/22/7100">Ui-Tei <i>et al.</i>, 2008</a>) for detail.</p>
+
+<h4>References</h4>
+<ul>
+	<li>Ui-Tei K, Naito Y, Nishi K, Juni A, Saigo K. (2008)<br>
+		Thermodynamic stability and Watson-Crick base pairing in the seed duplex are major determinants of the efficiency of the siRNA-based off-target effect.<br>
+		<i>Nucleic Acids Res.</i> <b>36</b>, 7100-7109.
+		<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/36/22/7100">[Link]</a>
+</ul>
+
+</body>
+</html>
