@@ -14,7 +14,7 @@
 
 use warnings ;
 use strict ;
-use WWW::Mechanize ;
+use LWP::Simple ;
 
 my $siDirect_top_url = 'http://siDirect2.RNAi.jp/' ;
 
@@ -24,12 +24,6 @@ my %query = get_query_parameters() ;  # CGIが受け取ったデータの処理
 #- ▼ 検索パラメータのセット
 my $seq = flatsequence($query{'seq'}) || '' ;
 #my $seq = flatsequence($query{'seq'}) || 'GGGTCCGGTTGCAATGCAA' ;  # テスト用にデフォルト値を設定
-my $spe =
-	(not $query{'spe'}) ? 'Homo_sapiens' :  # 未定義の場合はヒト
-	($query{'spe'} eq 'hs') ? 'Homo_sapiens' :  # ヒト
-	($query{'spe'} eq 'mm') ? 'Mus_musculus' :  # マウス
-	($query{'spe'} eq 'rn') ? 'Rattus_norvegicus' :  # ラット
-		'Homo_sapiens' ;  # 指定なき場合はヒト
 my $maxmismatch = $query{'MaxMismatch'} || 3 ;  # 指定なき場合は3ミスマッチまで
 my $seqlength = $query{'TargetSize'} || length($seq) ;
 my $maxoutputsize = $query{'MaxOutputSize'} || -1 ;
@@ -39,16 +33,43 @@ my $strand =
 	($query{'strand'} eq 'minus') ? 'minus' :
 		'both' ;  # plus, minus 以外は both にセット
 #- ▲ 検索パラメータのセット
-#- ▼ siDirectCoreにアクセスして結果を取得
-my $mech = WWW::Mechanize->new ;
-$mech->get("http://alps3.gi.k.u-tokyo.ac.jp/service/query.jsp?fasta=$seq&target=$spe&param=OutputType=simple,MaxMismatch=$maxmismatch,MaxUsingSeed=-1,MinUsingSeed=0,TargetSize=$seqlength,MaxOutputSize=$maxoutputsize") ;
-my $rawdata = $mech->content ;
-#- ▲ siDirectCoreにアクセスして結果を取得
-my @hits = parse_siDirectCore($rawdata) ;
+
+#- ▼ GGGenomeにアクセスして結果を取得
+my $baseurl = 'https://gggenome.dbcls.jp/' ;
+# 検索対象db
+my $db = $query{'spe'} ;
+# k
+my $k = $maxmismatch ;
+# strand_ggg
+my $strand_ggg = '' ;
+if ($strand eq 'both'){
+	$strand_ggg = '' ;
+} elsif ($strand eq 'plus'){
+	$strand_ggg = '+' ;
+} elsif ($strand eq 'minus'){
+	$strand_ggg = '-' ;
+}
+
+# nogap
+my $nogap = 'nogap' ;
+
+# GGGenomeに対する検索
+my $url = "${baseurl}/${db}/${k}/${strand_ggg}/${nogap}/${seq}.txt" ;
+my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime ;
+if ($min == 59 && $sec >= 50){
+	# 毎時00分のデーモン再起動を避ける
+	sleep(20) ;
+}
+my $rawdata = get($url) ;
+#- ▲ GGGenomeにアクセスして結果を取得
+
+my @hits = parse_ggg_txt_for_si($rawdata) ;
+
 @hits =
 	($strand eq 'plus') ? grep {(split /\t/, $_)[1] eq 'plus'} @hits :
 	($strand eq 'minus') ? grep {(split /\t/, $_)[1] eq 'minus'} @hits :
 	@hits ;
+
 my $offtargetlist_table = table_siDirectCore(@hits) ;
 print_result_html($timestamp,$offtargetlist_table) ;
 
@@ -122,7 +143,7 @@ foreach (@hits){
 	$strand =~ s/plus/+/ ;
 	$strand =~ s/minus/-/ ;
 	$sseq = mismatch_red($sseq,$pattern) ;
-	$definition = parse_definition($definition) ;
+	$definition = parse_definition_ggg($definition) ;
 	$offtargetlist_table .= "<tr><td class=$match_bgcolor>$match\n" ;
 	$offtargetlist_table .= "	<td class=$match_bgcolor>$strand\n" ;
 	$offtargetlist_table .= "	<td><pre><span class=$strand_bgcolor>$tseq</span><br>$pattern<br>$sseq</pre>\n" ;
@@ -131,6 +152,109 @@ foreach (@hits){
 }
 $offtargetlist_table .= "</table>" ;
 return $offtargetlist_table ;
+} ;
+#================================================================
+# parse_ggg_txt_for_si
+#================================================================
+# gggenomeのtxt形式結果をパースして、siDirect用の結果に整形
+# タブ区切り
+# undef
+# $strand	:	plusないしminus
+#	$mis	：	mismatch数（背景色の設定に必要）
+# $match	：	match数
+# undef
+# undef
+# undef
+# undef
+#	$definition
+# $sseq	:	similar seq（検索された配列）
+# $tseq	：	target seq（クエリ配列）
+# $pattern	:	一致不一致のパターン（|とXで標記、アライメントのミスマッチ文字を赤にするために必要）
+# 結果はタブ区切りテキストの配列で下記のソートを行って返す
+# 第1キー：match数の数値降順
+# 第2キー：strand、plusが優先（文字列で降順ソート）
+# 第3キー：patternで文字列昇順
+#================================================================
+sub parse_ggg_txt_for_si (){
+	my @lines = split("\n", shift) ;
+	my %strandDist2cnt = () ;
+	my %strandDistSymbolAlign2cnt = () ;
+	my %matchStrandAlignSymbol2def = () ;
+	my %matchStrandAlignSymbol2pat = () ;
+	my %matchStrandAlignSymbol2mis = () ;
+	my %matchStrandAlignSymbol2sseq = () ;
+	my %matchStrandAlignSymbol2tseq = () ;
+
+	my %strandHash = () ;
+	$strandHash{'+'} = "plus" ;
+	$strandHash{'-'} = "minus" ;
+
+	my $metaCnt = 0 ;
+	my $lineCnt = 0 ;
+	foreach my $res (@lines){
+		# コメント行は読み飛ばし
+		if ($res =~ /^#/){
+			if ($res =~ /^# count:\t(\d+)/){
+				$metaCnt += $1 ;
+			}
+			next ;
+		}
+		$lineCnt++ ;
+		my @data = split("\t", $res) ;
+		# シンボル抽出
+		my $symbol = "" ;
+		if ($data[0] =~ /^.+ \(([^ ]+)\)/){
+				$symbol = $1 ;
+		}
+		# distance毎に、シンボルとターゲットのアライメントの組み合わせでユニーク化してカウントをとっていく
+		my $strand = $strandHash{$data[1]} ;
+		my $align = $data[8] ;  # target(similar sequence)のアライメント配列
+		my $match = $data[11] ;
+		my $dist = $data[12] ;  # nogapなのでdistance = mismatch
+		my $pattern = $data[9] ;
+		$pattern =~ s/ /X/g ;
+		my $patternAlign = $pattern . $align ;
+		my $def = $data[0] ;
+
+		if ($matchStrandAlignSymbol2def{$match}{$strand}{$patternAlign}{$symbol}){
+			$matchStrandAlignSymbol2def{$match}{$strand}{$patternAlign}{$symbol} .= "\n" ;
+		}
+		$matchStrandAlignSymbol2def{$match}{$strand}{$patternAlign}{$symbol} .= $def ;
+		$matchStrandAlignSymbol2pat{$match}{$strand}{$patternAlign}{$symbol} = $pattern ;
+		$matchStrandAlignSymbol2mis{$match}{$strand}{$patternAlign}{$symbol} = $dist ;
+		$matchStrandAlignSymbol2sseq{$match}{$strand}{$patternAlign}{$symbol} = $align ;
+		$matchStrandAlignSymbol2tseq{$match}{$strand}{$patternAlign}{$symbol} = $data[7] ;
+	}
+	# 念のため件数の一致も確認？
+	if ($metaCnt != $lineCnt){
+		warn("meta count ($metaCnt) does not match with results ($lineCnt)") ;
+	}
+	# 結果を配列にまとめる
+	my @resAry = () ;
+	foreach my $match (sort {$b <=> $a} keys %matchStrandAlignSymbol2def){
+		foreach my $strand (sort {$b cmp $a} keys %{$matchStrandAlignSymbol2def{$match}}){
+			foreach my $patternAlign (sort {$a cmp $b} keys %{$matchStrandAlignSymbol2def{$match}{$strand}}){  # 同じミスマッチ位置でも配列が異なる場合には区別するのでパターンとアライメントで一意に決める
+				foreach my $symbol (sort {$a cmp $b} keys %{$matchStrandAlignSymbol2def{$match}{$strand}{$patternAlign}}){
+					push @resAry, join(
+						"\t",
+						'',
+						$strand,
+						$matchStrandAlignSymbol2mis{$match}{$strand}{$patternAlign}{$symbol},
+						$match,
+						'',
+						'',
+						'',
+						'',
+						$symbol . "\n" . $matchStrandAlignSymbol2def{$match}{$strand}{$patternAlign}{$symbol},
+						$matchStrandAlignSymbol2sseq{$match}{$strand}{$patternAlign}{$symbol},
+						$matchStrandAlignSymbol2tseq{$match}{$strand}{$patternAlign}{$symbol},
+						$matchStrandAlignSymbol2pat{$match}{$strand}{$patternAlign}{$symbol}
+					) ;
+				}
+			}
+		}
+	}
+	return @resAry ;
 } ;
 # ====================
 sub mismatch_red {
@@ -163,6 +287,17 @@ while (
 if ($def){
 	$out .= "<br>" . $def ;
 }
+return $out ;
+} ;
+# ====================
+sub parse_definition_ggg {
+my @defAry = split("\n", $_[0]) ;
+my $out = "<font color=#999966>$defAry[0]</font>" ;
+for (my $i = 1 ; $i < @defAry ; $i++){
+	$defAry[$i] =~ s/^(\S+) /<a target="_blank" href="https:\/\/www.ncbi.nlm.nih.gov\/nuccore\/$1">$1<\/a> | / ;
+	$out .= "<br />" . $defAry[$i] ;
+}
+
 return $out ;
 } ;
 # ====================
