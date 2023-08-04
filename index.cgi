@@ -15,6 +15,10 @@
 use warnings ;
 use strict ;
 use WWW::Mechanize ;
+use FindBin ;                     # perl 5.26以降はカレントディレクトリはlibrary pathに含まれないので追加する
+use lib $FindBin::Bin ;
+eval 'use DBlist ; 1' or          # データベースの正式名
+	warn('ERROR : cannot load DBlist') ;
 
 my $googleanalyticscode =
 '<!-- Google Analytics tracking code -->
@@ -53,7 +57,6 @@ print_top_html('',$sampleseq,'',$debug) ;
 }
 
 my $mech = WWW::Mechanize->new ;
-#$mech->get("http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?dopt=fasta&sendto=t&val=$query{'accession'}") ;
 $mech->get("http://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?val=$query{'accession'}&dopt=fasta&sendto=t") ;
 my $fasta = $mech->content ;
 $fasta =~ s/\s+\z// ;
@@ -94,47 +97,56 @@ my $debug = $_[3] || '' ;
 if ($accession and not $fasta){
 	$fasta = 'not found.' ;
 }
-my $nrdb =
-($speflag eq 'Hs') ?
-'	<option value=hs selected>Homo sapiens (human) non-redundant database</option>
-	<option value=mm>Mus musculus (mouse) non-redundant database</option>
-	<option value=rn>Rattus norvegicus (rat) non-redundant database</option>
+
+# 2021-04-12 DB追加の度にソースを書き換えないで済むように変更
+my $dbcnt = 0 ;	# 表示順用変数
+my %dbinfo = () ;
+my %species2defaultIndex = () ;
+my $defaultIndexScript = "\tif (0) {}\n" ;
+my $dbconf = $DBlist::dbconfig ;  # データベース名と正式名称のリスト
+foreach (split /\n/, $DBlist::dbconfig){
+	chomp ;
+	my ($db, $desc, $species) = split /\t/ ;
+	$dbinfo{$db} = {
+		'no'   => ++$dbcnt,
+		'desc' => $desc
+	} ;
+	unless (defined($species2defaultIndex{$species})){
+		$species2defaultIndex{$species} = $dbcnt ;  # 配列取得時のデフォルトDB選択用
+		# 2021-04-12 配列取得時のDB選択ロジックを動的に変更
+		$defaultIndexScript .= <<EOS ;
+	else if (res.indexOf("${species}") != -1) {
+		document.getElementById("nrdbSpe").selectedIndex = $species2defaultIndex{$species} ;
+		document.getElementById("hideLessSpecific").checked = true ;
+	}
+EOS
+	}
+}
+
+my $nrdb = "" ;
+my $fSelected = 0 ;
+foreach my $dbname (sort {$dbinfo{$a}->{'no'} <=> $dbinfo{$b}->{'no'}} keys %dbinfo){
+	if ($fSelected == 0 && length($speflag) == 0){
+		# speflagに値がセットされていなければ最初のDBを選択状態にしておく
+		$nrdb .= "<option value=${dbname} selected>${dbinfo{$dbname}->{'desc'}}</option>\n" ;
+		$fSelected = 1 ;
+	} elsif ($fSelected == 0 && ${dbname} =~ /^${speflag}/i){
+		# speflagに値がセットされている場合、先頭がspeflagと一致したらデフォルト選択にしておく
+		$nrdb .= "<option value=${dbname} selected>${dbinfo{$dbname}->{'desc'}}</option>\n" ;
+		$fSelected = 1 ;
+	} else {
+		$nrdb .= "<option value=${dbname}>${dbinfo{$dbname}->{'desc'}}</option>\n" ;
+	}
+}
+$nrdb .= <<EOF ;
 </select> &nbsp;
 <a href="doc/NRDB.html" onclick="window.open(\'doc/NRDB.html\',\'\',\'width=530,height=700\') ; return false ;">
 <img src="qicon.gif" alt="Help" border=0></a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <input type=checkbox checked id=hideLessSpecific name=hidenonspe value=1>
-	Hide less-specific siRNAs' :
-($speflag eq 'Mm') ?
-'	<option value=hs>Homo sapiens (human) non-redundant database</option>
-	<option value=mm selected>Mus musculus (mouse) non-redundant database</option>
-	<option value=rn>Rattus norvegicus (rat) non-redundant database</option>
-</select> &nbsp;
-<a href="doc/NRDB.html" onclick="window.open(\'doc/NRDB.html\',\'\',\'width=530,height=700\') ; return false ;">
-<img src="qicon.gif" alt="Help" border=0></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<input type=checkbox checked id=hideLessSpecific name=hidenonspe value=1>
-	Hide less-specific siRNAs' :
-($speflag eq 'Rn') ?
-'	<option value=hs>Homo sapiens (human) non-redundant database</option>
-	<option value=mm>Mus musculus (mouse) non-redundant database</option>
-	<option value=rn selected>Rattus norvegicus (rat) non-redundant database</option>
-</select> &nbsp;
-<a href="doc/NRDB.html" onclick="window.open(\'doc/NRDB.html\',\'\',\'width=530,height=700\') ; return false ;">
-<img src="qicon.gif" alt="Help" border=0></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<input type=checkbox checked id=hideLessSpecific name=hidenonspe value=1>
-	Hide less-specific siRNAs' :
-# それ以外：ヒトNRDBを選択し、Hide less-specific siRNAsのチェックをはずす。
-'	<option value=hs selected>Homo sapiens (human) non-redundant database</option>
-	<option value=mm>Mus musculus (mouse) non-redundant database</option>
-	<option value=rn>Rattus norvegicus (rat) non-redundant database</option>
-</select> &nbsp;
-<a href="doc/NRDB.html" onclick="window.open(\'doc/NRDB.html\',\'\',\'width=530,height=700\') ; return false ;">
-<img src="qicon.gif" alt="Help" border=0></a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<input type=checkbox id=hideLessSpecific name=hidenonspe value=1>
-	Hide less-specific siRNAs' ;
+	Hide less-specific siRNAs
+EOF
+
 # デバッグ用ページ。デバッグフラグを次のページに引き継ぐ。
 my $debug_html1 = $debug ?
 '<input type=hidden name=debug value=1>' : '' ;
@@ -199,16 +211,7 @@ function createHttpRequest(){
 function on_loaded(oj){
 	res  = oj.responseText ;
 	document.getElementById("useq").value = res ;
-	if (res.indexOf("Homo sapiens") != -1){
-		document.getElementById("nrdbSpe").selectedIndex = 1 ;
-		document.getElementById("hideLessSpecific").checked = true ;
-	} else if (res.indexOf("Mus musculus") != -1){
-		document.getElementById("nrdbSpe").selectedIndex = 2 ;
-		document.getElementById("hideLessSpecific").checked = true ;
-	} else if (res.indexOf("Rattus norvegicus") != -1){
-		document.getElementById("nrdbSpe").selectedIndex = 3 ;
-		document.getElementById("hideLessSpecific").checked = true ;
-	}
+' . $defaultIndexScript . '
 }
 
 img1 = new Image(); img1.src = "doc/venn_all.gif" ;

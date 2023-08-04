@@ -33,6 +33,10 @@
 
 use warnings ;
 use strict ;
+use FindBin ;                     # perl 5.26以降はカレントディレクトリはlibrary pathに含まれないので追加する
+use lib $FindBin::Bin ;
+eval 'use DBlist ; 1' or          # データベースの正式名
+	warn('ERROR : cannot load DBlist') ;
 
 my $siDirect_top_url = 'http://siDirect2.RNAi.jp/' ;
 
@@ -59,11 +63,10 @@ my %rna_ds = %{$rna_ds_ref} ;
 
 # ▼ DBに接続
 use DBI ;
+my $dbdir = '/siDB/' ;
 my $dbh = DBI->connect(
-	'DBI:mysql:sidirect2009','root','designsi',
-	# { RaiseError => 1, AutoCommit => 0 }
-	{ AutoCommit => 0 }
-) or ($option{'hs'},$option{'mm'},$option{'rn'}) = (0,0,0) ;  # DBが落ちている場合はspe=noneの結果を表示（2010-05-12変更）
+	'DBI:SQLite:dbname='.$dbdir.$query{'spe'}.'.sqlite'
+) ;
 # ▲ DBに接続
 
 if (my @siRNAlist = select_sirna($targetsequence,\%option)){
@@ -78,6 +81,7 @@ if (my @siRNAlist = select_sirna($targetsequence,\%option)){
 }
 
 $dbh->disconnect ;
+
 exit ;
 
 # ====================
@@ -129,13 +133,6 @@ $query{'URA'} and ($option{'uitei'},$option{'reynolds'},$option{'amarzguioui'},$
 $query{'ALL'} and ($option{'uitei'},$option{'reynolds'},$option{'amarzguioui'},$option{'ALL'}) = (1,1,1,1) ;
 # ▲ 効くsiRNAの選択オプション
 # ▼ 19mer/3mm検索のprecomputed DB照会オプション
-if ($query{'spe'} and $query{'spe'} eq 'hs'){
-	$option{'hs'} = 1 ;  # ヒトNRDBに対する3mm検索
-} elsif ($query{'spe'} and $query{'spe'} eq 'mm'){
-	$option{'mm'} = 1 ;  # マウスNRDBに対する3mm検索
-} elsif ($query{'spe'} and $query{'spe'} eq 'rn'){
-	$option{'rn'} = 1 ;  # ラットNRDBに対する3mm検索
-}
 $query{'hidenonspe'} and $option{'hidenonspe'} = 1 ;
 $query{'hitcount'} and $option{'hitcount'} = 1 ;
 # ▲ 19mer/3mm検索のprecomputed DB照会オプション
@@ -257,11 +254,16 @@ $rule =
 my $seedTmMax = ($option{'seedTm'} and defined $option{'seedTmMax'} and not $option{'seedTmMax'} eq '') ? $option{'seedTmMax'} + 0 . '&deg;C' : '(blank)' ;
 my $posStart = ($option{'pos'} and $option{'posStart'}) ? $option{'posStart'} : '(blank)' ;
 my $posEnd = ($option{'pos'} and $option{'posEnd'}) ? $option{'posEnd'} : '(blank)' ;
-my $spe =
-	$option{'hs'} ? 'Homo sapiens non-redundant database' :
-	$option{'hs'} ? 'Mus musculus non-redundant database' :
-	$option{'hs'} ? 'Rattus norvegicus non-redundant database' :
-		'none' ;
+
+# 2023-07-28 指定speciesからRefSeqの長い名称を復元
+my %db_fullname ;
+foreach (split /\n/, $DBlist::dbconfig){
+	chomp ;
+	my ($db, $desc, undef) = split /\t/ ;
+	$db_fullname{$db} = $desc ;
+}
+my $spe = $db_fullname{$query{'spe'}} // 'none' ;
+
 my $consGCmax = ($option{'consGC'} and $option{'consGCmax'} and $option{'consGCmax'} =~ /^[4-7]$/) ? "$option{'consGCmax'} nt" : '(blank)' ;
 my $consATmax = ($option{'consAT'} and $option{'consATmax'} and $option{'consATmax'} =~ /^[4-7]$/) ? "$option{'consATmax'} nt" : '(blank)' ;
 my $percentGCMin = ($option{'percentGC'} and defined $option{'percentGCMin'} and not $option{'percentGCMin'} eq '') ? $option{'percentGCMin'} + 0 . '%' : '(blank)' ;
@@ -366,38 +368,15 @@ if ($option{'URA'}){
 }
 # ▲ 効くsiRNA・combined ruleによる選択
 # ▼ 19mer/3mm検索のprecomputed DB照会
-if ($option{'hs'}){
+# 2021-02-05 $query{'spe'}で動的にテーブル選択
+if ($query{'spe'} ne 'none'){
 	foreach (@siRNAlist){
-		#my ($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3) = sidirect2_hs($$_{'si23'}) ;
-		my ($p0,undef,$p1,undef,$p2,undef,$p3,undef) = sidirect2_hs(substr($$_{'si23'},1,19)) ;  # 2009-06-30変更
-		my (undef,$m0,undef,$m1,undef,$m2,undef,$m3) = sidirect2_hs(substr($$_{'si23'},3,19)) ;  # 2009-06-30変更
-		my $mt_plus = mt_plus($p0,$p1,$p2,$p3) ;  # 2009-06-30変更
-		my $mt_minus = mt_minus($m0,$m1,$m2,$m3) ;  # 2009-06-30変更
-		@$_{'p0','m0','p1','m1','p2','m2','p3','m3','mt_plus','mt_minus'} = ($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3,$mt_plus,$mt_minus) ;
-		if ($option{'hidenonspe'} and not ($mt_plus and $mt_plus >= 2 and $mt_minus and $mt_minus >= 2)){  # mt=2までOKとする。2009-07-01変更
-			$$_{'hide'} = 1 ;
-		}
-	}
-} elsif ($option{'mm'}){
-	foreach (@siRNAlist){
-		#my ($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3) = sidirect2_mm($$_{'si23'}) ;
-		my ($p0,undef,$p1,undef,$p2,undef,$p3,undef) = sidirect2_mm(substr($$_{'si23'},1,19)) ;  # 2009-06-30変更
-		my (undef,$m0,undef,$m1,undef,$m2,undef,$m3) = sidirect2_mm(substr($$_{'si23'},3,19)) ;  # 2009-06-30変更
-		my $mt_plus = mt_plus($p0,$p1,$p2,$p3) ;  # 2009-06-30変更
-		my $mt_minus = mt_minus($m0,$m1,$m2,$m3) ;  # 2009-06-30変更
-		@$_{'p0','m0','p1','m1','p2','m2','p3','m3','mt_plus','mt_minus'} = ($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3,$mt_plus,$mt_minus) ;
-		if ($option{'hidenonspe'} and not ($mt_plus and $mt_plus >= 2 and $mt_minus and $mt_minus >= 2)){  # mt=2までOKとする。2009-07-01変更
-			$$_{'hide'} = 1 ;
-		}
-	}
-} elsif ($option{'rn'}){
-	foreach (@siRNAlist){
-		#my ($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3) = sidirect2_rn($$_{'si23'}) ;
-		my ($p0,undef,$p1,undef,$p2,undef,$p3,undef) = sidirect2_rn(substr($$_{'si23'},1,19)) ;  # 2009-06-30変更
-		my (undef,$m0,undef,$m1,undef,$m2,undef,$m3) = sidirect2_rn(substr($$_{'si23'},3,19)) ;  # 2009-06-30変更
-		my $mt_plus = mt_plus($p0,$p1,$p2,$p3) ;  # 2009-06-30変更
-		my $mt_minus = mt_minus($m0,$m1,$m2,$m3) ;  # 2009-06-30変更
-		@$_{'p0','m0','p1','m1','p2','m2','p3','m3','mt_plus','mt_minus'} = ($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3,$mt_plus,$mt_minus) ;
+		my ($p0, undef, $p1, undef, $p2, undef, $p3, undef, $p4, undef) = sidirect2_db(substr($$_{'si23'}, 1, 19)) ;  # 2009-06-30変更
+		my (undef, $m0, undef, $m1, undef, $m2, undef, $m3, undef, $m4) = sidirect2_db(complementaryDNA(substr($$_{'si23'}, 3, 19))) ;  # 2009-06-30変更
+		my $mt_plus  =  mt_plus($p0, $p1, $p2, $p3, $p4) ;  # 2009-06-30変更
+		my $mt_minus = mt_minus($m0, $m1, $m2, $m3, $m4) ;  # 2009-06-30変更
+		@$_{'p0', 'm0', 'p1', 'm1', 'p2', 'm2', 'p3', 'm3', 'p4', 'm4', 'mt_plus', 'mt_minus'} =
+		   ($p0,  $m0,  $p1,  $m1,  $p2,  $m2,  $p3,  $m3,  $p4,  $m4,  $mt_plus,  $mt_minus) ;
 		if ($option{'hidenonspe'} and not ($mt_plus and $mt_plus >= 2 and $mt_minus and $mt_minus >= 2)){  # mt=2までOKとする。2009-07-01変更
 			$$_{'hide'} = 1 ;
 		}
@@ -596,52 +575,34 @@ if (my $si19 = check_19mer($_[0])){
 }
 } ;
 # ====================
-sub sidirect2_hs {
+# テーブル名は$query{'spe'}で動的に生成
+sub sidirect2_db {
 if (my $si19 = check_19mer($_[0])){
-	if (my @sql_kekka = sql_select("
-			SELECT
-				p0,m0,p1,m1,p2,m2,p3,m3
-			FROM
-				sidirect2_hs
-			WHERE
-				targetseq = \"$si19\"
-		")){
-		my @offtargets = split /\t/, $sql_kekka[0] ;
-		return @offtargets ;
-	}
-}
-return ('','','','','','','','') ;
-} ;
-# ====================
-sub sidirect2_mm {
-if (my $si19 = check_19mer($_[0])){
-	if (my @sql_kekka = sql_select("
-			SELECT
-				p0,m0,p1,m1,p2,m2,p3,m3
-			FROM
-				sidirect2_mm
-			WHERE
-				targetseq = \"$si19\"
-		")){
-		my @offtargets = split /\t/, $sql_kekka[0] ;
-		return @offtargets ;
-	}
-}
-return ('','','','','','','','') ;
-} ;
-# ====================
-sub sidirect2_rn {
-if (my $si19 = check_19mer($_[0])){
-	if (my @sql_kekka = sql_select("
-			SELECT
-				p0,m0,p1,m1,p2,m2,p3,m3
-			FROM
-				sidirect2_rn
-			WHERE
-				targetseq = \"$si19\"
-		")){
-		my @offtargets = split /\t/, $sql_kekka[0] ;
-		return @offtargets ;
+	$si19 = lc $si19 ;
+	if (${query{'spe'}} =~ /_d4/){
+		if (my @sql_kekka = sql_select("
+				SELECT
+					p0,p0,p1,p1,p2,p2,p3,p3,p4,p4
+				FROM
+					sidirect2_${query{'spe'}}
+				WHERE
+					targetseq = \"$si19\"
+			")){
+			my @offtargets = split /\t/, $sql_kekka[0] ;
+			return @offtargets ;
+		}
+	} else {
+		if (my @sql_kekka = sql_select("
+				SELECT
+					p0,p0,p1,p1,p2,p2,p3,p3
+				FROM
+					sidirect2_${query{'spe'}}
+				WHERE
+					targetseq = \"$si19\"
+			")){
+			my @offtargets = split /\t/, $sql_kekka[0] ;
+			return @offtargets ;
+		}
 	}
 }
 return ('','','','','','','','') ;
@@ -661,25 +622,47 @@ return @result ;
 } ;
 # ====================
 sub mt_plus {
-my ($p0,$p1,$p2,$p3,undef) = @_ ;
-my $mt_plus =
-	(defined $p0 and defined $p1 and defined $p2 and defined $p3 and $p0 ne '' and $p1 ne '' and $p2 ne '' and $p3 ne '') ?
-		($p0 <= 1) ?
-			($p1 == 0) ?
-				($p2 == 0) ?
-					($p3 == 0) ? 4 : 3 : 2 : 1 : 0 : '' ;
-return $mt_plus ;
+my ($p0, $p1, $p2, $p3, $p4, undef) = @_ ;
+	if (defined $p4){
+		my $mt_plus =
+			(defined $p0 and defined $p1 and defined $p2 and defined $p3 and defined $p4 and $p0 ne '' and $p1 ne '' and $p2 ne '' and $p3 ne '' and $p4 ne '') ?
+				($p0 <= 1) ?
+					($p1 == 0) ?
+						($p2 == 0) ?
+							($p3 == 0) ?
+								($p4 == 0) ? 5 : 4 : 3 : 2 : 1 : 0 : '' ;
+		return $mt_plus ;
+	} else {
+		my $mt_plus =
+			(defined $p0 and defined $p1 and defined $p2 and defined $p3 and $p0 ne '' and $p1 ne '' and $p2 ne '' and $p3 ne '') ?
+				($p0 <= 1) ?
+					($p1 == 0) ?
+						($p2 == 0) ?
+							($p3 == 0) ? 4 : 3 : 2 : 1 : 0 : '' ;
+		return $mt_plus ;
+	}
 } ;
 # ====================
 sub mt_minus {
-my ($m0,$m1,$m2,$m3,undef) = @_ ;
-my $mt_minus =
-	(defined $m0 and defined $m1 and defined $m2 and defined $m3 and $m0 ne '' and $m1 ne '' and $m2 ne '' and $m3 ne '') ?
-		($m0 == 0) ?
-			($m1 == 0) ?
-				($m2 == 0) ?
-					($m3 == 0) ? 4 : 3 : 2 : 1 : 0 : '' ;
-return $mt_minus ;
+my ($m0, $m1, $m2, $m3, $m4, undef) = @_ ;
+	if (defined $m4){
+		my $mt_minus =
+			(defined $m0 and defined $m1 and defined $m2 and defined $m3 and defined $m4 and $m0 ne '' and $m1 ne '' and $m2 ne '' and $m3 ne '' and $m4 ne '') ?
+				($m0 == 0) ?
+					($m1 == 0) ?
+						($m2 == 0) ?
+							($m3 == 0) ?
+								($m3 == 0) ? 5 : 4 : 3 : 2 : 1 : 0 : '' ;
+		return $mt_minus ;
+	} else {
+		my $mt_minus =
+			(defined $m0 and defined $m1 and defined $m2 and defined $m3 and $m0 ne '' and $m1 ne '' and $m2 ne '' and $m3 ne '') ?
+				($m0 == 0) ?
+					($m1 == 0) ?
+						($m2 == 0) ?
+							($m3 == 0) ? 4 : 3 : 2 : 1 : 0 : '' ;
+		return $mt_minus ;
+	}
 } ;
 # ====================
 sub get_nearest_neighbor_param {
@@ -855,9 +838,12 @@ $option{'amarzguioui'} and $html .= "\t\t<font class=a>A</font>marzguioui<br>\n"
 # seed部分のTmによる選択・結果表示
 $option{'seedTm'} and $html .= "\t<td class=pw colspan=3 rowspan=2>seed-duplex<br>stabilty (Tm);\n" ;
 # 19mer/3mm検索のprecomputed DB照会・結果表示
-($option{'hs'} or $option{'mm'} or $option{'rn'}) and $html .=
+# 2021-02-05 $query{'spe'}で判定するように変更
+($query{'spe'} ne 'none') and $html .=
 	"\t<td class=gw colspan=2 rowspan=2>specificity check:<br>minimum number of<br>mismatches against<br>any off-targets;\n" ;
-$option{'hitcount'} and ($option{'hs'} or $option{'mm'} or $option{'rn'}) and $html .=
+$option{'hitcount'} and ($query{'spe'} ne 'none') and $html .=
+	($query{'spe'} =~ /_d4/) ?
+	"\t<td class=gw colspan=10>specificity check:<br>number of off-target hits with<br>indicated mismatches(strand)\n" :
 	"\t<td class=gw colspan=8>specificity check:<br>number of off-target hits with<br>indicated mismatches(strand)\n" ;
 # Target rangeによる選択・結果表示
 $option{'pos'} and $html .= "\t<td class=vw rowspan=3>target<br>position\n" ;
@@ -875,7 +861,10 @@ $html .= "\t</tr>\n" ;
 
 $html .= "<tr>\n" ;
 # 19mer/3mm検索のprecomputed DB照会・結果表示
-$option{'hitcount'} and ($option{'hs'} or $option{'mm'} or $option{'rn'}) and $html .=
+# 2021-02-05 $query{'spe'}利用
+$option{'hitcount'} and ($query{'spe'} ne 'none') and $html .=
+	($query{'spe'} =~ /_d4/) ?
+	"\t<td class=gw colspan=5>guide (+)<td class=gw colspan=5>passenger (-)\n" :
 	"\t<td class=gw colspan=4>guide (+)<td class=gw colspan=4>passenger (-)\n" ;
 $html .= "\t</tr>\n" ;
 
@@ -883,9 +872,12 @@ $html .= "<tr>\n" ;
 # seed部分のTmによる選択・結果表示
 $option{'seedTm'} and $html .= "\t<td class=pw><td class=pw>guide<td class=pw>passenger\n" ;
 # 19mer/3mm検索のprecomputed DB照会・結果表示
-($option{'hs'} or $option{'mm'} or $option{'rn'}) and $html .=
+# 2021-02-05 $query{'spe'}利用
+($query{'spe'} ne 'none') and $html .=
 	"\t<td class=gw>guide<td class=gw>passenger\n" ;
-$option{'hitcount'} and ($option{'hs'} or $option{'mm'} or $option{'rn'}) and $html .=
+$option{'hitcount'} and ($query{'spe'} ne 'none') and $html .=
+	($query{'spe'} =~ /_d4/) ?
+	"\t<td class=gw>0(+)<td class=gw>1(+)<td class=gw>2(+)<td class=gw>3(+)<td class=gw>4(+)<td class=gw>0(-)<td class=gw>1(-)<td class=gw>2(-)<td class=gw>3(-)<td class=gw>4(-)\n" :
 	"\t<td class=gw>0(+)<td class=gw>1(+)<td class=gw>2(+)<td class=gw>3(+)<td class=gw>0(-)<td class=gw>1(-)<td class=gw>2(-)<td class=gw>3(-)\n" ;
 
 $html .= "</tr>\n" ;
@@ -899,12 +891,15 @@ foreach (@siRNAlist){
 		'startpos' => '','endpos' => '','si23' => '','name' => '',
 		'efficacy' => '','seed_tm' => '','seed_tm_sense' => '',
 		'p0' => '','m0' => '','p1' => '','m1' => '','p2' => '','m2' => '','p3' => '','m3' => '',
+		'p4' => '','m4' => '',
 		'pos' => '','consGC' => '','consAT' => '','percentGC' => '','custom' => '','exclude' => '',
 		'color' => '','mt_plus' => '','mt_minus' => '',
 	%$_) ;  # undefを返さないようにデフォルト値として空白文字を代入しておく。
 	my ($startpos,$endpos,$si23,$name,$efficacy,$seed_tm,$seed_tm_sense,$p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3,
+		$p4,$m4,
 		$pos,$consGC,$consAT,$percentGC,$custom,$exclude,$color,$mt_plus,$mt_minus) =
 		@$_{'startpos','endpos','si23','name','efficacy','seed_tm','seed_tm_sense','p0','m0','p1','m1','p2','m2','p3','m3',
+		'p4','m4',
 		'pos','consGC','consAT','percentGC','custom','exclude','color','mt_plus','mt_minus'} ;
 	if ($efficacy){ # HTML化。U/R/Aに色をつける。
 		$efficacy =~ s|(?<=.)(?=.)| |g ;
@@ -912,9 +907,16 @@ foreach (@siRNAlist){
 		$efficacy =~ s|R|<font class=r>R</font>| ;
 		$efficacy =~ s|A|<font class=a>A</font>| ;
 	}
-	foreach (($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3)){  # hit数が100を越えるものは>100と表示する。
-		if ($_ and $_ > 100){
-			$_ = '&gt;100' ;
+	foreach (($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3,$p4,$m4)){  # hit数が100を越えるものは>100と表示する。
+		if ($query{'spe'} =~ /_d4/){
+			# d=4まで検索している場合、大きな数値も確認したいと思われるので、1000以上を>1000と表示する
+			if ($_ and $_ > 1000){
+				$_ = '&gt;1000' ;
+			}
+		} else {
+			if ($_ and $_ > 100){
+				$_ = '&gt;100' ;
+			}
 		}
 	}
 	my $si19g = substr($si23,1,19) ;  # guide鎖off-target検索用
@@ -938,29 +940,25 @@ foreach (@siRNAlist){
 	$option{'seedTm'} and $html .= "\t<td class=$p>$color_html&nbsp;&nbsp;$color_html_closetag\n" ;
 	$option{'seedTm'} and $html .= "\t<td class=$p>$seed_tm &deg;C\n" ;
 	$option{'seedTm'} and $html .= "\t<td class=$p>$seed_tm_sense &deg;C\n" ;
+	my $linkdb = $query{'spe'} ;
+	$linkdb =~ s/_d\d+$// ;
+	my $maxMisStr = '' ;
+	if ($query{'spe'} =~ /_d(\d+)/){
+		$maxMisStr = '&MaxMismatch=' . $1 ;
+	}
 	$html .=
-		$option{'hs'} ? "\t<td class=$g>$mt_plus " .
-			'<a target="_blank" href="detail.cgi?seq=' . $si19g . '&strand=plus&spe=hs">[detail]</a>' .
+		($query{'spe'} ne 'none') ? "\t<td class=$g>$mt_plus " .
+			'<a target="_blank" href="detail.cgi?seq=' . $si19g . '&strand=plus&spe=' . $linkdb . $maxMisStr . '">[detail]</a>' .
 			"<td class=$g>$mt_minus " .
-			'<a target="_blank" href="detail.cgi?seq=' . $si19p . '&strand=minus&spe=hs">[detail]</a>' . "\n" :
-		$option{'mm'} ? "\t<td class=$g>$mt_plus " .
-			'<a target="_blank" href="detail.cgi?seq=' . $si19g . '&strand=plus&spe=mm">[detail]</a>' .
-			"<td class=$g>$mt_minus " .
-			'<a target="_blank" href="detail.cgi?seq=' . $si19p . '&strand=minus&spe=mm">[detail]</a>' . "\n" :
-		$option{'rn'} ? "\t<td class=$g>$mt_plus " .
-			'<a target="_blank" href="detail.cgi?seq=' . $si19g . '&strand=plus&spe=rn">[detail]</a>' .
-			"<td class=$g>$mt_minus " .
-			'<a target="_blank" href="detail.cgi?seq=' . $si19p . '&strand=minus&spe=rn">[detail]</a>' . "\n" :
+			'<a target="_blank" href="detail.cgi?seq=' . $si19p . '&strand=minus&spe=' . $linkdb . $maxMisStr .'">[detail]</a>' . "\n" :
 			'' ;
 	$option{'hitcount'} and $html .= (defined $p0 and not $p0 eq '') ?
+			($query{'spe'} =~ /_d4/) ?
+			"\t<td class=$g>$p0<td class=$g>$p1<td class=$g>$p2<td class=$g>$p3<td class=$g>$p4<td class=$g>$m0<td class=$g>$m1<td class=$g>$m2<td class=$g>$m3<td class=$g>$m4\n" :
 			"\t<td class=$g>$p0<td class=$g>$p1<td class=$g>$p2<td class=$g>$p3<td class=$g>$m0<td class=$g>$m1<td class=$g>$m2<td class=$g>$m3\n" :
-		$option{'hs'} ? "\t<td class=$g colspan=8><font class=s>not available</font> " . "\n" :
-#			'<a target="_blank" href="siDirectHs.cgi?val=' . $si23 . '">[show detail]</a>' . "\n" :
-		$option{'mm'} ? "\t<td class=$g colspan=8><font class=s>not available</font> " . "\n" :
-#			'<a target="_blank" href="siDirectMm.cgi?val=' . $si23 . '">[show detail]</a>' . "\n" :
-		$option{'rn'} ? "\t<td class=$g colspan=8><font class=s>not available</font> " . "\n" :
-#			'<a target="_blank" href="siDirectRn.cgi?val=' . $si23 . '">[show detail]</a>' . "\n" :
+			($query{'spe'} ne 'none') ? "\t<td class=$g colspan=8><font class=s>not available</font> " . "\n" :
 			'' ;
+	# 2021-02-05 $query{'spe'}利用
 	$option{'pos'} and $html .= $pos ? "\t<td class=$v>ok\n" : "\t<td class=$v>\n" ;
 	$option{'consGC'} and $option{'consGCmax'} and $html .= $consGC ? "\t<td class=$v>ok\n" : "\t<td class=$v>\n" ;  # &#10003; はwin IEで四角になる。
 	$option{'consAT'} and $option{'consATmax'} and $html .= $consAT ? "\t<td class=$v>ok\n" : "\t<td class=$v>\n" ;
@@ -997,8 +995,12 @@ my $txt = 'target position	target sequence	RNA oligo, guide	passenger	functional
 # seed部分のTmによる選択・結果表示
 $option{'seedTm'} and $txt .= '	seed-duplex stabilty (Tm), guide	passenger' ;
 # 19mer/3mm検索のprecomputed DB照会・結果表示
-($option{'hs'} or $option{'mm'} or $option{'rn'}) and $txt .= '	min. number of mismatches against off-targets, guide	passenger' ;
-$option{'hitcount'} and ($option{'hs'} or $option{'mm'} or $option{'rn'}) and $txt .= '	number of off-target hits, 0(+)	1(+)	2(+)	3(+)	0(-)	1(-)	2(-)	3(-)' ;
+# 2021-02-05 $query{'spe'}利用
+($query{'spe'} ne 'none') and $txt .= '	min. number of mismatches against off-targets, guide	passenger' ;
+$option{'hitcount'} and ($query{'spe'} ne 'none') and $txt .=
+($query{'spe'} =~ /_d4/) ?
+'	number of off-target hits, 0(+)	1(+)	2(+)	3(+)	4(+)	0(-)	1(-)	2(-)	3(-)	4(-)' :
+'	number of off-target hits, 0(+)	1(+)	2(+)	3(+)	0(-)	1(-)	2(-)	3(-)' ;
 # Target rangeによる選択・結果表示
 $option{'pos'} and $txt .= '	target position' ;
 # Gの連続・Cの連続による選択・結果表示
@@ -1020,16 +1022,24 @@ foreach (@siRNAlist){
 		'startpos' => '','endpos' => '','si23' => '','name' => '',
 		'efficacy' => '','seed_tm' => '','seed_tm_sense' => '',
 		'p0' => '','m0' => '','p1' => '','m1' => '','p2' => '','m2' => '','p3' => '','m3' => '',
+		'p4' => '','m4' => '',
 		'pos' => '','consGC' => '','consAT' => '','percentGC' => '','custom' => '','exclude' => '',
 		'mt_plus' => '','mt_minus' => '',
 	%$_) ;  # undefを返さないようにデフォルト値として空白文字を代入しておく。
-	my ($startpos,$endpos,$si23,$name,$efficacy,$seed_tm,$seed_tm_sense,$p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3,
+	my ($startpos,$endpos,$si23,$name,$efficacy,$seed_tm,$seed_tm_sense,$p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3,$p4,$m4,
 		$pos,$consGC,$consAT,$percentGC,$custom,$exclude,$mt_plus,$mt_minus) =
-		@$_{'startpos','endpos','si23','name','efficacy','seed_tm','seed_tm_sense','p0','m0','p1','m1','p2','m2','p3','m3',
+		@$_{'startpos','endpos','si23','name','efficacy','seed_tm','seed_tm_sense','p0','m0','p1','m1','p2','m2','p3','m3','p4','m4',
 		'pos','consGC','consAT','percentGC','custom','exclude','mt_plus','mt_minus'} ;
-	foreach (($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3)){  # hit数が100を越えるものは>100と表示する。
-		if ($_ and $_ > 100){
-			$_ = '>100' ;
+	foreach (($p0,$m0,$p1,$m1,$p2,$m2,$p3,$m3,$p4,$m4)){  # hit数が100を越えるものは>100と表示する。
+		if ($query{'spe'} =~ /_d4/){
+			# d=4まで検索している場合、大きな数値も確認したいと思われるので、1000以上を>1000と表示する
+			if ($_ and $_ > 1000){
+				$_ = '>1000' ;
+			}
+		} else {
+			if ($_ and $_ > 100){
+				$_ = '>100' ;
+			}
 		}
 	}
 	my $rnaseq_gs = RNAoligo_guide($si23) ;  # guide鎖オリゴ配列計算
@@ -1037,8 +1047,13 @@ foreach (@siRNAlist){
 	$txt .= "$name	$si23	$rnaseq_gs	$rnaseq_ps	$efficacy" ;
 	# ▼ 他のcriteriaをチェック
 	$option{'seedTm'} and $txt .= "	$seed_tm	$seed_tm_sense" ;
-	($option{'hs'} or $option{'mm'} or $option{'rn'}) and $txt .= "	$mt_plus	$mt_minus" ;
-	$option{'hitcount'} and ($option{'hs'} or $option{'mm'} or $option{'rn'}) and $txt .= "	$p0	$p1	$p2	$p3	$m0	$m1	$m2	$m3" ;
+	# 2021-02-05 $query{'spe'}利用
+	($query{'spe'} ne 'none') and $txt .= "	$mt_plus	$mt_minus" ;
+	$option{'hitcount'} and ($query{'spe'} ne 'none') and $txt .=
+($query{'spe'} =~ /_d4/) ?
+"	$p0	$p1	$p2	$p3	$p4	$m0	$m1	$m2	$m3	$m4" :
+"	$p0	$p1	$p2	$p3	$m0	$m1	$m2	$m3" ;
+	# 2021-02-05 $query{'spe'}利用
 	$option{'pos'} and $txt .= $pos ? "	1" : "	0" ;
 	$option{'consGC'} and $option{'consGCmax'} and $txt .= $consGC ? "	1" : "	0" ;
 	$option{'consAT'} and $option{'consATmax'} and $txt .= $consAT ? "	1" : "	0" ;
@@ -1205,7 +1220,7 @@ foreach (@siRNAlist){
 		}
 		# ▲ 現在の行に表示するsiRNAのリスト
 		# ▼ 次以降の行に表示するsiRNAのリスト
-		if ($endpos > $targetlength_thisline) {
+		if ($endpos > $targetlength_thisline){
 			my $new_startpos = $startpos - $targetlength_thisline ;
 			if ($new_startpos < 1){
 				$new_startpos = 1 ;
