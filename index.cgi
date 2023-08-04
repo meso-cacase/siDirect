@@ -1,16 +1,11 @@
 #!/usr/bin/perl
 
-# 2008-09-01.y-naito
-# 2008-12-22.y-naito（マウスNRDBが自動選択されるようにした）
-# 2008-12-29.y-naito（ベン図をjavascriptで表示）
-# 2009-01-20.y-naito（ラットNRDBを追加）
-# 2009-02-14.y-naito（combinedルール変更、debugページ追加）
-# 2009-08-07.y-naito（通常ページとplusページとに分割）
-# 2009-10-17.y-naito（plusページを廃止して1つに統合）
-# 2009-10-18.y-naito（Ajaxでretrieve sequenceすることでページ遷移を抑制）
-# 2009-10-18.y-naito（ブラウザを判定してMac MSIEはnoscriptと同じ動作にする）
-# 2009-10-18.y-naito（Ajaxでretrieve sequenceしてもNRDBを自動選択する）
-# 2010-11-10.y-naito（NCBIのURL変更）
+# -----------------------------
+# siDirect web server, TOP page
+# -----------------------------
+#
+# 2008-09-01 Yuki Naito (@meso_cacase)
+# 2023-07-10 Yuki Naito (@meso_cacase) Version 2.1
 
 use warnings ;
 use strict ;

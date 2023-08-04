@@ -1,16 +1,14 @@
 #!/usr/bin/perl
 
-# http://design.rnai.jp/service/query.jspを利用してオフターゲットリストを表示する。
-# http://genomics.jp/service/query.jspにリンク先を変更（2010-01-01）。
-# http://alps3.gi.k.u-tokyo.ac.jp/service/query.jspにリンク先を変更（2010-10-03）。
-# 
+# --------------------------------
+# siDirect web server, DETAIL page
+# --------------------------------
+# This page displays a detailed list of off-target sites.
 #
-# 2009-04-28.y-naito
-# 2009-06-26.y-naito
-# 2009-06-29.y-naito
-# 2009-07-24.y-naito（配列名のparseを変更）
-# 2010-01-01.y-naito（DNS変更に伴いリンク先変更）
-# 2010-10-03.y-naito（genomics.jp失効に伴いリンク先変更）
+# GGGenome https://GGGenome.dbcls.jp/ を利用してオフターゲットリストを表示する方法に変更（2023-07-01）
+#
+# 2009-04-28 Yuki Naito (@meso_cacase)
+# 2023-07-10 Yuki Naito (@meso_cacase) Version 2.1
 
 use warnings ;
 use strict ;

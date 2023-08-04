@@ -1,35 +1,12 @@
 #!/usr/bin/perl
 
-# 2008-08-26.y-naito
-# 2008-08-27.y-naito
-# 2008-08-28.y-naito
-# 2008-09-01.y-naito
-# 2008-09-02.y-naito
-# 2008-09-17.y-naito
-# 2008-09-24.y-naito（マウス追加）
-# 2008-12-08.y-naito（@siRNAlistの構造をハッシュへのリファレンスに変更）
-# 2008-12-09.y-naito（オプションを追加）
-# 2008-12-10.y-naito（オプションを追加）
-# 2008-12-11.y-naito（オプションを追加）
-# 2008-12-12.y-naito（オプションを追加）
-# 2008-12-13.y-naito（Excel出力を追加）
-# 2008-12-22.y-naito（タイムスタンプ出力）
-# 2008-12-26.y-naito（precomputed siRNAにない場合の対応）
-# 2008-12-29.y-naito（Ui-Tei + Reynolds ^ Amarzguiouiのcombinationを実装）
-# 2009-01-20.y-naito（ラットNRDBを追加）
-# 2009-02-14.y-naito（combinedルール変更）
-# 2009-03-16.y-naito（siRNAが1個も設計できなかったときに別画面を表示）
-# 2009-04-14.y-naito（sense側のseed Tmを考慮）
-# 2009-06-30.y-naito（off-target検索をguide 2-20, passenger 4-22に変更）
-# 2009-07-01.y-naito（ミスマッチ耐性ではなくseed Tmで色をつける）
-# 2009-08-20.y-naito（関数を整理）
-# 2009-08-20.y-naito（23ntの範囲にNがあるものは候補からはずす）
-# 2009-10-19.y-naito（クエリのオプション一覧を表示）
-# 2009-10-19.y-naito（GC含量で0未満や100より大の数値を置き換える）
-# 2009-10-19.y-naito（TmとGC含量の入力に0をプラスして数値にする：-0→0、0.30→0.3）
-# 2009-10-19.y-naito（RNAオリゴ配列を表示）
-# 2010-05-12.y-naito（DBが落ちている場合にspe=noneの結果を表示）
-# 2010-05-12.y-naito（配列名を結果ページに表示する）
+# --------------------------------
+# siDirect web server, DESIGN page
+# --------------------------------
+# This page displays a list of designed siRNAs.
+#
+# 2008-08-26 Yuki Naito (@meso_cacase)
+# 2023-07-10 Yuki Naito (@meso_cacase) Version 2.1
 
 use warnings ;
 use strict ;
