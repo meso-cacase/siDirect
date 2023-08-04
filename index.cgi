@@ -261,13 +261,13 @@ if (ua.indexOf("msie") != -1 && ua.indexOf("mac") != -1){
 	document.write(\'<form name=getSequence method=GET action=".">\') ;
 	document.write(\'' . $debug_html1 . '\') ;
 	document.write(\'<p>Enter an accession number and retrieve sequence:<br>\') ;
-	document.write(\'<input type=text name=accession size=20 maxlength=50 value="' . $accession . '">\') ;
+	document.write(\'<input type=text name=accession size=30 maxlength=50 value="' . $accession . '">\') ;
 	document.write(\'<input type=submit value="retrieve sequence">\') ;
 	document.write(\'</p>\') ;
 	document.write(\'</form>\') ;
 } else {
 	document.write(\'<p>Enter an accession number and retrieve sequence:<br>\') ;
-	document.write(\'<input type=text id=acc name=accession size=20 maxlength=50 value="' . $accession . '" onkeypress="if(event.keyCode==13){retrieveSequence()}">\') ;
+	document.write(\'<input type=text id=acc name=accession size=30 maxlength=50 value="' . $accession . '" onkeypress="if(event.keyCode==13){retrieveSequence()}">\') ;
 	document.write(\'<input type=button value="retrieve sequence" onclick="retrieveSequence()">\') ;
 	document.write(\'<\/p>\') ;
 }
@@ -278,7 +278,7 @@ if (ua.indexOf("msie") != -1 && ua.indexOf("mac") != -1){
 <form name=getSequence method=GET action=".">
 ' . $debug_html1 . '
 <p>Enter an accession number and retrieve sequence:<br>
-<input type=text name=accession size=20 maxlength=50 value="' . $accession . '">
+<input type=text name=accession size=30 maxlength=50 value="' . $accession . '">
 <input type=submit value="retrieve sequence">
 </p>
 
@@ -294,19 +294,7 @@ if (ua.indexOf("msie") != -1 && ua.indexOf("mac") != -1){
 
 <p><input type=submit value="design siRNA"></p>
 
-<h3>Options: <font size=2><a href="javascript:showOption(\'options\')">
-<script type="text/javascript">
-<!--
-document.write(\'<img src="clickhere.gif" alt="click here" border=0>\') ;
-//-->
-</script>
-</a></font></h3>
-
-<script type="text/javascript">
-<!--
-document.write(\'<div id=options style="display:none">\') ;
-//-->
-</script>
+<h3>Options:</h3>
 
 <div style="background-color:#FFF0E0; width:90%; margin-bottom:1em">
 <table cellpadding=0 cellspacing=0 width="100%">
@@ -321,7 +309,7 @@ document.write(\'<div id=options style="display:none">\') ;
 <input type=checkbox checked name=uitei value=1>
 	<span onmouseover="venn.src=img2.src" onmouseout="venn.src=img1.src">
 	Ui-Tei <i>et al.</i>, <i>Nucleic Acids Res</i> <b>32</b>, 936-948 (2004)
-	<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/32/3/936">Link</a></span><br>
+	<a target="_blank" href="https://doi.org/10.1093/nar/gkh247">Link</a></span><br>
 <script type="text/javascript">
 <!--
 document.write(\'<a id=more1 href="javascript:showOption(\\\'functional_options\\\');showOption(\\\'venn\\\');more2hide(\\\'more1\\\')">[more options...]<\/a><br>\') ;
@@ -331,11 +319,11 @@ document.write(\'<div id=functional_options style="display:none">\') ;
 <input type=checkbox name=reynolds value=1>
 	<span onmouseover="venn.src=img3.src" onmouseout="venn.src=img1.src">
 	Reynolds <i>et al.</i>, <i>Nat Biotechnol</i> <b>22</b>, 326-330 (2004)
-	<a target="_blank" href="http://dx.doi.org/10.1038/nbt936">Link</a></span><br>
+	<a target="_blank" href="https://doi.org/10.1038/nbt936">Link</a></span><br>
 <input type=checkbox name=amarzguioui value=1>
 	<span onmouseover="venn.src=img4.src" onmouseout="venn.src=img1.src">
 	Amarzguioui <i>et al.</i>, <i>BBRC</i> <b>316</b>, 1050-1058 (2004)
-	<a target="_blank" href="http://linkinghub.elsevier.com/retrieve/pii/S0006291X04004425">Link</a></span>
+	<a target="_blank" href="https://doi.org/10.1016/j.bbrc.2004.02.157">Link</a></span>
 </p>
 <p>
 use combined rule:<br>
@@ -385,12 +373,12 @@ document.write(\'<\/div>\') ;
 </p>
 <p><input type=checkbox checked name=seedTm value=1>
 	<b>Seed-duplex stability</b>: Max Tm
-	<input type=text name=seedTmMax size=7 maxlength=12 value="21.5">&deg;C &nbsp;<font color=red>new!</font>
+	<input type=text name=seedTmMax size=7 maxlength=12 value="21.5">&deg;C
 	<br>&nbsp;&nbsp;&nbsp;&nbsp;
 	(for reducing seed-dependent off-target effect)
 	<br>&nbsp;&nbsp;&nbsp;&nbsp;
 	Ui-Tei <i>et al.</i>, <i>Nucleic Acids Res</i> <b>36</b>, 7100-7109 (2008)
-	<a target="_blank" href="http://nar.oxfordjournals.org/cgi/content/full/36/22/7100">Link</a><br>
+	<a target="_blank" href="https://doi.org/10.1093/nar/gkn902">Link</a><br>
 </p>
 
 	</td>
@@ -414,7 +402,7 @@ document.write(\'<div id=specificity_options style="display:none">\') ;
 //-->
 </script>
 &nbsp;&nbsp;&nbsp;&nbsp;
-<input type=checkbox name=hitcount value=1>
+<input type=checkbox checked name=hitcount value=1>
 	Show number of off-target hits within three mismatches
 <script type="text/javascript"> 
 <!--
@@ -461,12 +449,12 @@ document.write(\'<\/div>\') ;
 
 <p><input type=checkbox name=custom value=1>
 	<b>Custom pattern</b>:
-	<input type=text name=customPattern size=30 maxlength=23 value="NNGNNNNNNNNNNNNNNNNNNNN">
+	<input type=text name=customPattern size=40 maxlength=23 value="NNGNNNNNNNNNNNNNNNNNNNN">
 	<a href="doc/pattern.html" onclick="window.open(\'doc/pattern.html\',\'\',\'width=530,height=700\') ; return false ;">
 	<img src="qicon.gif" alt="Help" border=0></a><br>
 	<input type=checkbox name=exclude value=1>
 	<b>Exclude pattern</b>:
-	<input type=text name=excludePattern size=30 maxlength=23 value="">
+	<input type=text name=excludePattern size=40 maxlength=23 value="">
 </p>
 
 <hr><!-- __________________________________________________ -->
@@ -475,12 +463,6 @@ document.write(\'<\/div>\') ;
 	Only show siRNAs that match all checked criteria 
 </p>
 </div>
-
-<script type="text/javascript">
-<!--
-document.write(\'<\/div>\') ;
-//-->
-</script>
 
 </form>
 
