@@ -209,13 +209,13 @@ function on_loaded(oj){
 ' . $defaultIndexScript . '
 }
 
-img1 = new Image(); img1.src = "doc/venn_all.gif" ;
-img2 = new Image(); img2.src = "doc/venn_uitei.gif" ;
-img3 = new Image(); img3.src = "doc/venn_reynolds.gif" ;
-img4 = new Image(); img4.src = "doc/venn_amarzguioui.gif" ;
-img5 = new Image(); img5.src = "doc/venn_combined.gif" ;
-img6 = new Image(); img6.src = "doc/venn_combined2.gif" ;
-img7 = new Image(); img7.src = "doc/venn_UorRorA.gif" ;
+img1 = new Image(); img1.src = "doc/venn_all.svg" ;
+img2 = new Image(); img2.src = "doc/venn_uitei.svg" ;
+img3 = new Image(); img3.src = "doc/venn_reynolds.svg" ;
+img4 = new Image(); img4.src = "doc/venn_amarzguioui.svg" ;
+img5 = new Image(); img5.src = "doc/venn_combined.svg" ;
+img6 = new Image(); img6.src = "doc/venn_combined2.svg" ;
+img7 = new Image(); img7.src = "doc/venn_UorRorA.svg" ;
 function showOption(optName){
 	optMenu = document.getElementById(optName).style ;
 	if (optMenu.display == \'none\') optMenu.display = "block" ; else optMenu.display = "none" ;
@@ -351,7 +351,7 @@ document.write(\'<div id=venn style="display:none">\') ;
 //-->
 </script>
 		<a target="_blank" href="doc/algorithms.html">
-		<img src="doc/venn_all.gif" name=venn border=0></a>
+		<img src="doc/venn_all.svg" name=venn width=200 border=0></a>
 <script type="text/javascript">
 <!--
 document.write(\'<\/div>\') ;
