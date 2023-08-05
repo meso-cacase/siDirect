@@ -246,9 +246,9 @@ function more2hide(id){
 
 <body>
 
-<img src="ocean.jpg" height=80 width="100%">
-<div>
-<font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font>highly effective, target specific siRNA online design site.
+<a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
+<div style="font-size:8pt">
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font></a>highly effective, target specific siRNA online design site.
 <a target="_blank" href="doc/"><img src="help.png" alt="Help" width=36 height=15 border=0></a>
 </div>
 

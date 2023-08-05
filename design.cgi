@@ -1367,9 +1367,9 @@ print 'Content-type: text/html; charset=utf-8
 
 <body>
 
-<a href="/"><img src="ocean.jpg" height=80 width="100%" border=0></a>
+<a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
 <div style="font-size:8pt">
-<font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font>result page.
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font></a>result page.
 <a target="_blank" href="doc/"><img src="help.png" alt="Help" width=36 height=15 border=0></a>
 </div>
 
@@ -1485,8 +1485,10 @@ print 'Content-type: text/html; charset=utf-8
 
 <body>
 
-<a href="/"><img src="ocean.jpg" height=80 width="100%" border=0></a>
-<div style="font-size:8pt"><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small></font></div>
+<a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
+<div style="font-size:8pt">
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small></font></a>
+</div>
 
 <hr><!-- __________________________________________________ -->
 
@@ -1544,8 +1546,10 @@ print 'Content-type: text/html; charset=utf-8
 
 <body onload="setTimeout(\'refresh()\', 2000);">
 
-<a href="/"><img src="ocean.jpg" height=80 width="100%" border=0></a>
-<div style="font-size:8pt"><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small></font></div>
+<a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
+<div style="font-size:8pt">
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small></font></a>
+</div>
 
 <hr><!-- __________________________________________________ -->
 
@@ -1594,9 +1598,9 @@ print 'Content-type: text/html; charset=utf-8
 
 <body>
 
-<a href="/"><img src="ocean.jpg" height=80 width="100%" border=0></a>
+<a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
 <div style="font-size:8pt">
-<font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font>result page.
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font></a>result page.
 <a target="_blank" href="doc/"><img src="help.png" alt="Help" width=36 height=15 border=0></a>
 </div>
 
