@@ -384,7 +384,7 @@ document.write(\'<\/div>\') ;
 	</td>
 	<td>
 		<a href="doc/seedTm.html" onclick="window.open(\'doc/seedTm.html\',\'\',\'width=530,height=700\') ; return false ;">
-		<img src="doc/seedTm.gif" border=0></a>
+		<img src="doc/seedTm.svg" width=180 border=0></a>
 	</td>
 </tr>
 </table>
