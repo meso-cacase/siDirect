@@ -248,7 +248,7 @@ function more2hide(id){
 
 <img src="ocean.jpg" height=80 width="100%">
 <div>
-<font size=5>siDirect </font><font size=4>version 2.0 </font>highly effective, target specific siRNA online design site.
+<font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font>highly effective, target specific siRNA online design site.
 <a target="_blank" href="doc/"><img src="help.gif" alt="Help" border=0></a>
 </div>
 
@@ -468,7 +468,7 @@ document.write(\'<\/div>\') ;
 
 <hr><!-- __________________________________________________ -->
 
-<p><font color=gray>siDirect v.2.0 | Last modified on Dec 3, 2009.</font></p>
+<p><font color=gray>siDirect v2.1&beta; | Last modified on Jul 10, 2023.</font></p>
 
 ' . $googleanalyticscode . '</body>
 </html>

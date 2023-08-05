@@ -343,13 +343,13 @@ print 'Content-type: text/html; charset=utf-8
 
 <a href="/"><img src="ocean.jpg" height=80 width="100%" border=0></a>
 <div style="font-size:8pt">
-<font size=5>siDirect </font><font size=4>version 2.0 </font>result page.
+<font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font>result page.
 <a target="_blank" href="doc/"><img src="help.gif" alt="Help" border=0></a>
 </div>
 
 <hr><!-- __________________________________________________ -->
 
-<p><font color=gray>' . $timestamp . ',  siDirect v.2.0</font></p>
+<p><font color=gray>' . $timestamp . ',  siDirect v2.1&beta;</font></p>
 
 <h3>Similar Sequences</h3>
 
