@@ -224,6 +224,24 @@ function more2hide(id){
 	obj = document.getElementById(id) ;
 	if (obj.innerHTML == \'[more options...]\') obj.innerHTML = "[hide options]" ; else obj.innerHTML = "[more options...]" ;
 }
+function chk_combined_rule(obj){
+	if (obj.checked == true){
+			document.getElementsByName("uitei"      )[0].checked  = true ;
+			document.getElementsByName("uitei"      )[0].disabled = true ;
+			document.getElementsByName("reynolds"   )[0].checked  = true ;
+			document.getElementsByName("reynolds"   )[0].disabled = true ;
+			document.getElementsByName("amarzguioui")[0].checked  = true ;
+			document.getElementsByName("amarzguioui")[0].disabled = true ;
+			document.getElementsByName("UorRorA"    )[0].checked  = false ;
+			document.getElementsByName("UorRA"      )[0].checked  = false ;
+			document.getElementsByName("URA"        )[0].checked  = false ;
+			                                         obj.checked  = true ;
+	} else {
+			document.getElementsByName("uitei"      )[0].disabled = false ;
+			document.getElementsByName("reynolds"   )[0].disabled = false ;
+			document.getElementsByName("amarzguioui")[0].disabled = false ;
+	}
+}
 //-->
 </script>
 <style type="text/css">
@@ -327,13 +345,13 @@ document.write(\'<div id=functional_options style="display:none">\') ;
 </p>
 <p>
 use combined rule:<br>
-<input type=checkbox name=UorRorA value=1>
+<input type=checkbox name=UorRorA value=1 onclick="chk_combined_rule(this)">
 	<span onmouseover="venn.src=img7.src" onmouseout="venn.src=img1.src">
 	Ui-Tei + Reynolds + Amarzguioui</span><br>
-<input type=checkbox name=UorRA value=1>
+<input type=checkbox name=UorRA value=1 onclick="chk_combined_rule(this)">
 	<span onmouseover="venn.src=img5.src" onmouseout="venn.src=img1.src">
 	Ui-Tei + Reynolds &times; Amarzguioui</span><br>
-<input type=checkbox name=URA value=1>
+<input type=checkbox name=URA value=1 onclick="chk_combined_rule(this)">
 	<span onmouseover="venn.src=img6.src" onmouseout="venn.src=img1.src">
 	Ui-Tei &times; Reynolds &times; Amarzguioui</span>
 <script type="text/javascript">

@@ -328,15 +328,13 @@ if ($option{'UorRorA'}){
 			$$_{'hide'} = 1 ;
 		}
 	}
-}
-if ($option{'UorRA'}){
+} elsif ($option{'UorRA'}){
 	foreach (@siRNAlist){
 		if (not $$_{'efficacy'} =~ /U|RA/){
 			$$_{'hide'} = 1 ;
 		}
 	}
-}
-if ($option{'URA'}){
+} elsif ($option{'URA'}){
 	foreach (@siRNAlist){
 		if (not $$_{'efficacy'} eq 'URA'){
 			$$_{'hide'} = 1 ;
