@@ -15,7 +15,7 @@ use lib $FindBin::Bin ;
 eval 'use DBlist ; 1' or          # データベースの正式名
 	warn('ERROR : cannot load DBlist') ;
 
-my $siDirect_top_url = 'http://siDirect2.RNAi.jp/' ;
+my $siDirect_top_url = 'https://siDirect2.RNAi.jp/' ;
 
 my $timestamp = timestamp() ;
 my %query = get_query_parameters() ;  # CGIが受け取ったデータの処理
