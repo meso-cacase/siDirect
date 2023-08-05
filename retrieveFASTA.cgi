@@ -7,33 +7,18 @@
 
 use warnings ;
 use strict ;
-use WWW::Mechanize ;
+use LWP::Simple ;
 
 my %query = get_query_parameters() ;  # CGIが受け取ったデータの処理
-$query{'accession'} and (my $accession = $query{'accession'}) =~ s/^\s*(.*?)\s*$/$1/ ;  # 前後の空白文字を除去
 
-unless ($accession and $accession =~ /^[\w\.]+$/){
-	my $sampleseq =
-'>sample sequence
-ggctgccaag aacctgcagg aggcagaaga atggtacaaa tccaagtttg ctgacctctc
-tgaggctgcc aaccggaaca atgacgccct gcgccaggca aagcaggagt ccactgagta
-ccggagacag gtgcagtccc tcacctgtga agtggatgcc cttaaaggaa ccaatgagtc
-cctggaacgc cagatgcgtg aaatggaaga gaactttgcc gttgaagctg ctaactacca
-agacactatt ggccgcctgc aggatgagat tcagaatatg aaggaggaaa tggctcgtca
-ccttcgtgaa taccaagacc tgctcaatgt taagatggcc cttgacattg agattgccac
-ctacaggaag ctgctggaag gcgaggagag caggatttct ctgcctcttc caaacttttc
-ctccctgaac ctgagggaaa ctaatctgga ttcactccct ctggttgata cccactcaaa
-aaggacactt ctgattaaga cggttgaaac tagagatgga caggttatca acgaaacttc
-tcagcatcac gatgaccttg aataaaaatt gcacacactc agtgcagcaa tatattacca' ;
-	print_fasta_text($sampleseq) ;
-	exit ;
-}
+(my $accession = $query{'accession'} || '') =~ s/(^\s+|\s+$)//g ;  # 前後の空白文字を除去
+$accession =~ /^[\w\.]+$/ or print_fasta_text() ;
 
-my $mech = WWW::Mechanize->new ;
-#$mech->get("https://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?dopt=fasta&sendto=t&val=$query{'accession'}") ;
-$mech->get("https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?val=$query{'accession'}&dopt=fasta&sendto=t") ;
-my $fasta = $mech->content ;
+my $fasta = get(
+	'https://www.ncbi.nlm.nih.gov/sviewer/?report=fasta&retmode=text&val=' . $accession
+) || print_fasta_text('ERROR : cannot retrieve sequence.') ;
 $fasta =~ s/\s+\z// ;
+
 print_fasta_text($fasta) ;
 
 exit ;

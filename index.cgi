@@ -9,7 +9,7 @@
 
 use warnings ;
 use strict ;
-use WWW::Mechanize ;
+use LWP::Simple ;
 use FindBin ;                     # perl 5.26以降はカレントディレクトリはlibrary pathに含まれないので追加する
 use lib $FindBin::Bin ;
 eval 'use DBlist ; 1' or          # データベースの正式名
@@ -31,7 +31,7 @@ pageTracker._trackPageview();
 ' ;
 
 my %query = get_query_parameters() ;  # CGIが受け取ったデータの処理
-$query{'accession'} and (my $accession = $query{'accession'}) =~ s/^\s*(.*?)\s*$/$1/ ;  # 前後の空白文字を除去
+(my $accession = $query{'accession'} || '') =~ s/(^\s+|\s+$)//g ;  # 前後の空白文字を除去
 $query{'debug'} and my $debug = 1 ;
 
 unless ($accession and $accession =~ /^[\w\.]+$/){
@@ -51,10 +51,11 @@ print_top_html('',$sampleseq,'',$debug) ;
 	exit ;
 }
 
-my $mech = WWW::Mechanize->new ;
-$mech->get("http://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?val=$query{'accession'}&dopt=fasta&sendto=t") ;
-my $fasta = $mech->content ;
+my $fasta = get(
+	'https://www.ncbi.nlm.nih.gov/sviewer/?report=fasta&retmode=text&val=' . $accession
+) || "ERROR : cannot retrieve sequence." ;
 $fasta =~ s/\s+\z// ;
+
 my $speflag = ($fasta =~ /Homo sapiens/) ? 'Hs' :
 					($fasta =~ /Mus musculus/) ? 'Mm' :
 					($fasta =~ /Rattus norvegicus/) ? 'Rn' : '' ;
