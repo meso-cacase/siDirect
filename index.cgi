@@ -136,7 +136,7 @@ foreach my $dbname (sort {$dbinfo{$a}->{'no'} <=> $dbinfo{$b}->{'no'}} keys %dbi
 $nrdb .= <<EOF ;
 </select> &nbsp;
 <a href="doc/NRDB.html" onclick="window.open(\'doc/NRDB.html\',\'\',\'width=530,height=700\') ; return false ;">
-<img src="qicon.gif" alt="Help" border=0></a><br>
+<img src="qicon.png" alt="?" width=15 height=15 border=0></a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <input type=checkbox checked id=hideLessSpecific name=hidenonspe value=1>
 	Hide less-specific siRNAs
@@ -249,7 +249,7 @@ function more2hide(id){
 <img src="ocean.jpg" height=80 width="100%">
 <div>
 <font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font>highly effective, target specific siRNA online design site.
-<a target="_blank" href="doc/"><img src="help.gif" alt="Help" border=0></a>
+<a target="_blank" href="doc/"><img src="help.png" alt="Help" width=36 height=15 border=0></a>
 </div>
 
 <hr><!-- __________________________________________________ -->
@@ -303,7 +303,7 @@ if (ua.indexOf("msie") != -1 && ua.indexOf("mac") != -1){
 
 <p><b>Functional siRNA selection</b> algorithm by: &nbsp;
 <a target="_blank" href="doc/algorithms.html">
-<img src="qicon.gif" alt="Help" border=0></a>
+<img src="qicon.png" alt="?" width=15 height=15 border=0></a>
 </p>
 <p>
 <input type=checkbox checked name=uitei value=1>
@@ -369,7 +369,7 @@ document.write(\'<\/div>\') ;
 
 <p><b>Minimization of seed-dependent off-target effects</b> &nbsp;
 <a href="doc/seedTm.html" onclick="window.open(\'doc/seedTm.html\',\'\',\'width=530,height=700\') ; return false ;">
-<img src="qicon.gif" alt="Help" border=0></a>
+<img src="qicon.png" alt="?" width=15 height=15 border=0></a>
 </p>
 <p><input type=checkbox checked name=seedTm value=1>
 	<b>Seed-duplex stability</b>: Max Tm
@@ -451,7 +451,7 @@ document.write(\'<\/div>\') ;
 	<b>Custom pattern</b>:
 	<input type=text name=customPattern size=40 maxlength=23 value="NNGNNNNNNNNNNNNNNNNNNNN">
 	<a href="doc/pattern.html" onclick="window.open(\'doc/pattern.html\',\'\',\'width=530,height=700\') ; return false ;">
-	<img src="qicon.gif" alt="Help" border=0></a><br>
+	<img src="qicon.png" alt="?" width=15 height=15 border=0></a><br>
 	<input type=checkbox name=exclude value=1>
 	<b>Exclude pattern</b>:
 	<input type=text name=excludePattern size=40 maxlength=23 value="">
