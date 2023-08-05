@@ -468,7 +468,10 @@ document.write(\'<\/div>\') ;
 
 <hr><!-- __________________________________________________ -->
 
-<p><font color=gray>siDirect v2.1&beta; | Last modified on Jul 10, 2023.</font></p>
+<p>
+<font color=gray>siDirect v2.1&beta; | Last modified on Jul 24, 2023.<br>
+Previsous version: <a href="v2.0/">siDirect v2.0</a></font>
+</p>
 
 ' . $googleanalyticscode . '</body>
 </html>
