@@ -135,9 +135,7 @@ foreach my $dbname (sort {$dbinfo{$a}->{'no'} <=> $dbinfo{$b}->{'no'}} keys %dbi
 	}
 }
 $nrdb .= <<EOF ;
-</select> &nbsp;
-<a href="doc/NRDB.html" onclick="window.open(\'doc/NRDB.html\',\'\',\'width=530,height=700\') ; return false ;">
-<img src="qicon.png" alt="?" width=15 height=15 border=0></a><br>
+</select><br>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <input type=checkbox checked id=hideLessSpecific name=hidenonspe value=1>
 	Hide less-specific siRNAs
@@ -488,7 +486,7 @@ document.write(\'<\/div>\') ;
 <hr><!-- __________________________________________________ -->
 
 <p>
-<font color=gray>siDirect v2.1&beta; | Last modified on Jul 24, 2023.<br>
+<font color=gray>siDirect v2.1&beta; | Last modified on Aug 25, 2023.<br>
 Previsous version: <a href="v2.0/">siDirect v2.0</a></font>
 </p>
 
