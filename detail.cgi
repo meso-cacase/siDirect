@@ -296,12 +296,17 @@ return $out ;
 # ====================
 sub parse_definition_ggg {
 my @defAry = split("\n", $_[0]) ;
-my $out = "<font color=#999966>$defAry[0]</font>" ;
-for (my $i = 1 ; $i < @defAry ; $i++){
-	$defAry[$i] =~ s/^(\S+) /<a target="_blank" href="https:\/\/www.ncbi.nlm.nih.gov\/nuccore\/$1">$1<\/a> | / ;
-	$out .= "<br />" . $defAry[$i] ;
+my $symbol = shift @defAry ;
+@defAry = sort {  # RefSeq ID順にソートして表示
+	my ($a_moltype, $a_id, $a_ver) = ($a =~ /([A-Z]+)_(\d+)(\.(\d+))?/) ? ($1, $2, $4 || 0) : ('',0,0) ;
+	my ($b_moltype, $b_id, $b_ver) = ($b =~ /([A-Z]+)_(\d+)(\.(\d+))?/) ? ($1, $2, $4 || 0) : ('',0,0) ;
+	return $a_moltype cmp $b_moltype || $a_id <=> $b_id || $a_ver <=> $b_ver ;
+} @defAry ;
+my $out = "<font color=#999966>$symbol</font>" ;
+foreach (@defAry){
+	s/^(\S+) /<a target="_blank" href="https:\/\/www.ncbi.nlm.nih.gov\/nuccore\/$1">$1<\/a> | / ;
+	$out .= "<br />" . $_ ;
 }
-
 return $out ;
 } ;
 # ====================
