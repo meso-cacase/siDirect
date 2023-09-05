@@ -47,39 +47,42 @@
 
 <ol>
 	<li>Enter the accession number for human claudin 17 (NM_012131).
-	<li>Click 'retrieve sequence' to obtain the nucleotide sequence from GenBank.
+	<li>Click 'retrieve sequence' to obtain the nucleotide sequence.
 	<li>Alternatively, you can directly paste a nucleotide sequence.<br>
 		Accepted input types are FASTA or a plain nucleotide sequence up to 10 kbp.
 	<li>Click 'design siRNA'.
 </ol>
 
-<img src="CLDN17_top.gif">
+<img src="CLDN17_top.svg" width=420 height=415 border=0>
 
 <ol start=5>
 	<li>Results:
 	<ol type=A>
 		<li>siRNA target positions.
-		<li>siRNA target sequences (21nt + 2nt overhang) with links to the off-target list.
+		<li>siRNA target sequences (21nt + 2nt overhang).
+		<li>Oligonucleotide sequences (21nt guide strand and 21nt passenger strand).
 		<li>siRNA efficacy predictions. siRNAs with <font class=u>U</font>, <font class=r>R</font>, <font class=a>A</font> satisfy the functional siRNA design algorithms of <font class=u>U</font>i-Tei <i>et al.</i> (<a href="https://doi.org/10.1093/nar/gkh247">reference 3</a>), <font class=r>R</font>eynolds <i>et al.</i> (<a href="https://doi.org/10.1038/nbt936">reference 4</a>), and <font class=a>A</font>marzguioui <i>et al.</i> (<a href="https://doi.org/10.1016/j.bbrc.2004.02.157">reference 5</a>), respectively.
-		<li>Sequence similarity search results against human mRNAs. The number of hits with a complete match (19/19 matches), one mismatch (18/19 matches), two mismatches (17/19 matches), or three mismatches (16/19 matches) is shown. A number '1' in the 0(+) column usually indicates a complete match against the intended target mRNA (<i>e.g.</i>, claudin 17).
 		<li>Calculated Tm of the siRNA seed region. Selecting an siRNA with a lower seed Tm reduces off-target effects. &rarr; Ui-Tei <i>et al.</i> (<a href="https://doi.org/10.1093/nar/gkn902">reference 6</a>)
-		<li>Graphical view of designed siRNAs. Click each siRNA to show the off-target list.
-		<li>Tab-delimited siRNA list. You can copy-paste the result into Excel or text editors, etc. 
+		<li>Off-target search results. The minimum number of mismatches against any off-targets in the human transcripts. Searches are performed for 19nt sequences at positions 2-20 of both strands of the siRNA duplex, because these 19 nucleotides are thought to be involved in target mRNA recognition.
+		<li>The number of hits with a perfect match (19/19 matches), one mismatch (18/19 matches), two mismatches (17/19 matches), or three mismatches (16/19 matches) is shown. A number '1' in the 0(+) column usually indicates a perfect match with the intended target mRNA (<i>e.g.</i>, claudin 17).
+		<li>Graphical view of designed siRNAs.
+		<li>Tab-delimited siRNA list. You can copy-paste the results into Excel or text editors, etc.
 	</ol>
 </ol>
 
-<img src="CLDN17_result.gif">
+<img src="CLDN17_result_1.svg" width=634 height=613 border=0><br><br>
+<img src="CLDN17_result_2.svg" width=634 height=334 border=0><br><br>
+<img src="CLDN17_result_3.svg" width=900 height=325 border=0>
 
 <ol start=6>
-	<li>siRNA information.
-	<li>List of off-target candidates for individual siRNAs. The alignment between each off-target candidate and the siRNA sequence clarifies the locations of mismatches. Hits with a complete match (19/19 matches), one mismatch (18/19 matches), two mismatches (17/19 matches), or three mismatches (16/19 matches) are shown.
+	<li>List of off-target candidates for individual siRNAs. The alignment between each off-target candidate and the siRNA sequence clarifies the locations of mismatches. Hits with a perfect match (19/19 matches), one mismatch (18/19 matches), two mismatches (17/19 matches), or three mismatches (16/19 matches) are shown. Searches are performed for 19nt sequences at positions 2-20 of each strand of the siRNA duplex.
 	<ol type=A>
 	</ol>
 </ol>
 
-<img src="CLDN17_offlist.gif">
+<img src="CLDN17_offlist.svg" width=900 height=714 border=0>
 
-<ol start=8>
+<ol start=7>
 	<li>Design sense and antisense RNA oligonucleotides from the siDirect results.
 </ol>
 
@@ -89,10 +92,9 @@
 
 <ol>
 	<li>Enter the accession number for human vimentin (NM_003380).
-	<li>Click 'retrieve sequence' to obtain the nucleotide sequence from GenBank.
+	<li>Click 'retrieve sequence' to obtain the nucleotide sequence.
 	<li>Alternatively, you can directly paste a nucleotide sequence.<br>
 		Accepted input types are FASTA or a plain nucleotide sequence up to 10 kbp.
-	<li>Click 'Options: [click here]'.
 	<li>Check 'Avoid contiguous A's or T's 4 nt or more'.<br>
 		This prevents transcription termination by pol III promoters.
 	<li>Check 'Custom pattern' and input 'NNGNNNNNNNNNNNNNNNNNNNN' in the field.<br>
@@ -101,14 +103,14 @@
 	<li>Click 'design siRNA'.
 </ol>
 
-<img src="VIM_options.gif">
+<img src="VIM_options.svg" width=570 height=413 border=0>
 
 <ol start=9>
 	<li>Design oligonucleotide sequence from the siDirect result.
 </ol>
 
-<img src="VIM_result.gif"><br><br>
-<img src="target2sh.svg" width=597 height=240 border=0>
+<img src="VIM_result.svg" width=700 height=294 border=0><br><br>
+<img src="target2sh.svg" width=597 height=239 border=0>
 
 <h3>Methods</h3>
 
@@ -116,7 +118,7 @@
 The diagram below illustrates the siRNA selection process in siDirect version 2. All possible 23-mer subsequences, corresponding to the complementary sequence of the 21-nt guide strand and the 2-nt 3&prime; overhang of the passenger strand within the target sequence, are generated and filtered in three selection steps.
 </p>
 
-<img src="bmc-fig1_r1.svg" width=600 height=405 border=0>
+<img src="bmc-fig1_r1.svg" width=700 height=473 border=0>
 
 <h4>Step 1: Selection of highly functional siRNAs</h4>
 
@@ -205,7 +207,7 @@ Researchers from academic organizations are eligible to use siDirect freely for 
 
 <hr><!-- __________________________________________________ -->
 
-<p><font color=gray>siDirect v2.1&beta; | Last modified on Sep 5, 2023.</font></p>
+<p><font color=gray>siDirect v2.1&beta; | Last modified on Sep 6, 2023.</font></p>
 
 </body>
 </html>
