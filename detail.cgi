@@ -201,8 +201,14 @@ sub parse_ggg_txt_for_si (){
 		my @data = split("\t", $res) ;
 		# シンボル抽出
 		my $symbol = "" ;
-		if ($data[0] =~ /^.+ \(([^ ]+)\)/){
-				$symbol = $1 ;
+		# if ($data[0] =~ /^.+ \(([^ ]+)\)/){
+		# 		$symbol = $1 ;
+		# }
+		# symbol抽出の正規表現を下記のように変更（2023-09-05）
+		# ・ヒト2件、マウス2件、symbolの抽出に失敗していたものに対応
+		# ・他の哺乳類についてもsymbolの抽出成功率が上がることを確認
+		if ($data[0] =~ /^.+ \((?<symbol>.+)\), transcript variant|^.+\((?<symbol>.+)\)/){
+			$symbol = $+{symbol} ;
 		}
 		# distance毎に、シンボルとターゲットのアライメントの組み合わせでユニーク化してカウントをとっていく
 		my $strand = $strandHash{$data[1]} ;
