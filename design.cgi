@@ -1616,7 +1616,7 @@ Try relaxing various parameters, including functional siRNA selection algorithms
 Giving the following parameters will help you find out why no acceptable siRNAs were found.
 </p>
 
-<img src="doc/nosiRNA.gif">
+<img src="doc/nosiRNA.svg" width=400 height=428 border=0>
 
 <h3>Tab-delimited list <font size=2>(for data export)</font></h3>
 
