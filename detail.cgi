@@ -33,7 +33,7 @@ my $strand =
 #- ▲ 検索パラメータのセット
 
 #- ▼ GGGenomeにアクセスして結果を取得
-my $baseurl = 'https://gggenome.dbcls.jp/' ;
+my $baseurl = 'https://gggenome.dbcls.jp' ;
 # 検索対象db
 my $db = $query{'spe'} ;
 # k
@@ -68,7 +68,15 @@ my @hits = parse_ggg_txt_for_si($rawdata) ;
 	($strand eq 'minus') ? grep {(split /\t/, $_)[1] eq 'minus'} @hits :
 	@hits ;
 
-my $offtargetlist_table = table_siDirectCore(@hits) ;
+$url =~ s/\.txt$// ;
+my $offtargetlist_table =
+"<p>
+Sequence search powerd by <img src='doc/GGGlogo_small.png' height=14 alt='GGGenome' style='vertical-align:-2px'> :
+<a href='$url'>$url</a>
+</p>
+
+" . table_siDirectCore(@hits) ;
+
 print_result_html($timestamp,$offtargetlist_table) ;
 
 exit ;
