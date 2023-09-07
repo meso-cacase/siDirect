@@ -1,19 +1,28 @@
 siDirect
 ======================
 
-**siDirect** is a web server for selecting functional siRNA with reduced off-target effect.  
+**siDirect** is a web server for selecting functional siRNAs with reduced off-target effects.  
 
-+ siDirect 2.0 web server: http://siDirect2.RNAi.jp/
++ siDirect web server: https://siDirect2.RNAi.jp/
 
-![screenshot](https://user-images.githubusercontent.com/819807/102062187-bbcf9900-3e37-11eb-876f-e4c53872834c.png)
-
+<img src="https://github.com/meso-cacase/siDirect/assets/819807/afeb2a79-b319-4590-ba0b-99bbce49c4bc" width=609 alt="screenshot">
 
 References
 --------
 
 + Naito Y, Yoshimura J, Morishita S, Ui-Tei K. (2009)  
-siDirect 2.0: updated software for designing functional siRNA with reduced seed-dependent off-target effect.  
-_BMC Bioinformatics_ **10**, 392. https://doi.org/10.1186/1471-2105-10-392
+[siDirect 2.0: updated software for designing functional siRNA with reduced seed-dependent off-target effect.](https://doi.org/10.1186/1471-2105-10-392)  
+_BMC Bioinformatics_ **10**, 392.
 + Naito Y, Yamada T, Ui-Tei K, Morishita S, Saigo K. (2004)  
-siDirect: highly effective, target-specific siRNA design software for mammalian RNA interference.  
-_Nucleic Acids Res._ **32**, W124-W129. https://doi.org/10.1093/nar/gkh442
+[siDirect: highly effective, target-specific siRNA design software for mammalian RNA interference.](https://doi.org/10.1093/nar/gkh442)  
+_Nucleic Acids Res._ **32**, W124-W129.
+
+License
+--------
+
+Copyright &copy; 2009-2023 Yuki Naito
+([@meso_cacase](https://twitter.com/meso_cacase)) at  
+Database Center for Life Science (DBCLS) and  
+Tokyo Medical and Dental University (TMDU), Japan.  
+Distributed under
+[modified BSD license](https://opensource.org/licenses/bsd-license.php).
