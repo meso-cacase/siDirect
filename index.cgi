@@ -265,7 +265,7 @@ function chk_combined_rule(obj){
 
 <a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
 <div style="font-size:8pt">
-<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font></a>highly effective, target specific siRNA online design site.
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1 </font></a>highly effective, target specific siRNA online design site.
 <a target="_blank" href="doc/"><img src="help.png" alt="Help" width=36 height=15 border=0></a>
 </div>
 
@@ -486,7 +486,7 @@ document.write(\'<\/div>\') ;
 <hr><!-- __________________________________________________ -->
 
 <p>
-<font color=gray>siDirect v2.1&beta; | Last modified on Aug 25, 2023.<br>
+<font color=gray>siDirect v2.1 | Last modified on Sep 7, 2023.<br>
 Previsous version: <a href="/v2.0/">siDirect v2.0</a></font>
 </p>
 

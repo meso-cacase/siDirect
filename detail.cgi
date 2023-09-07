@@ -362,13 +362,13 @@ print 'Content-type: text/html; charset=utf-8
 
 <a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
 <div style="font-size:8pt">
-<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font></a>result page.
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1 </font></a>result page.
 <a target="_blank" href="doc/"><img src="help.png" alt="Help" width=36 height=15 border=0></a>
 </div>
 
 <hr><!-- __________________________________________________ -->
 
-<p><font color=gray>' . $timestamp . ',  siDirect v2.1&beta;</font></p>
+<p><font color=gray>' . $timestamp . ',  siDirect v2.1</font></p>
 
 <h3>Similar Sequences</h3>
 

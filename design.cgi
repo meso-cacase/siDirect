@@ -1367,13 +1367,13 @@ print 'Content-type: text/html; charset=utf-8
 
 <a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
 <div style="font-size:8pt">
-<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font></a>result page.
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1 </font></a>result page.
 <a target="_blank" href="doc/"><img src="help.png" alt="Help" width=36 height=15 border=0></a>
 </div>
 
 <hr><!-- __________________________________________________ -->
 
-<p><font color=gray>' . $timestamp . ',  siDirect v2.1&beta;</font></p>
+<p><font color=gray>' . $timestamp . ',  siDirect v2.1</font></p>
 
 <h3>Query</h3>
 
@@ -1442,7 +1442,7 @@ print 'Content-type: text/html; charset=utf-8
 <h3>Tab-delimited list <font size=2>(for data export)</font></h3>
 
 <textarea readonly rows=15 cols=90>
-[siDirect v2.1beta | ' . $timestamp . ']
+[siDirect v2.1 | ' . $timestamp . ']
 ' . $siRNA_table_txt . '</textarea>
 
 </body>
@@ -1485,7 +1485,7 @@ print 'Content-type: text/html; charset=utf-8
 
 <a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
 <div style="font-size:8pt">
-<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small></font></a>
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1</font></a>
 </div>
 
 <hr><!-- __________________________________________________ -->
@@ -1546,7 +1546,7 @@ print 'Content-type: text/html; charset=utf-8
 
 <a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
 <div style="font-size:8pt">
-<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small></font></a>
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1</font></a>
 </div>
 
 <hr><!-- __________________________________________________ -->
@@ -1598,13 +1598,13 @@ print 'Content-type: text/html; charset=utf-8
 
 <a href="."><img src="ocean.jpg" height=80 width="100%" border=0></a>
 <div style="font-size:8pt">
-<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1<small>&beta;</small> </font></a>result page.
+<a style="color:black" href="."><font size=5>siDirect </font><font size=4>version 2.1 </font></a>result page.
 <a target="_blank" href="doc/"><img src="help.png" alt="Help" width=36 height=15 border=0></a>
 </div>
 
 <hr><!-- __________________________________________________ -->
 
-<p><font color=gray>' . $timestamp . ',  siDirect v2.1&beta;</font></p>
+<p><font color=gray>' . $timestamp . ',  siDirect v2.1</font></p>
 
 <h3>Query</h3>
 
@@ -1621,7 +1621,7 @@ Giving the following parameters will help you find out why no acceptable siRNAs 
 <h3>Tab-delimited list <font size=2>(for data export)</font></h3>
 
 <textarea readonly rows=15 cols=90>
-[siDirect v2.1beta | ' . $timestamp . ']
+[siDirect v2.1 | ' . $timestamp . ']
 No effective siRNA candidates were found.
 </textarea>
 
