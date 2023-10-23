@@ -5,7 +5,7 @@ siDirect
 
 + siDirect web server: https://siDirect2.RNAi.jp/
 
-<img src="https://github.com/meso-cacase/siDirect/assets/819807/afeb2a79-b319-4590-ba0b-99bbce49c4bc" width=609 alt="screenshot">
+<img src="https://github.com/meso-cacase/siDirect/assets/819807/4abd9193-76eb-4566-bada-e59da0e6460f" width=609 alt="screenshot">
 
 References
 --------
