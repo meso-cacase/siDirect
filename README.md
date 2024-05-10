@@ -20,7 +20,7 @@ _Nucleic Acids Res._ **32**, W124-W129.
 License
 --------
 
-Copyright &copy; 2009-2023 Yuki Naito
+Copyright &copy; 2009-2024 Yuki Naito
 ([@meso_cacase](https://twitter.com/meso_cacase)) at  
 Database Center for Life Science (DBCLS) and  
 Tokyo Medical and Dental University (TMDU), Japan.  
