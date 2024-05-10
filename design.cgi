@@ -8,7 +8,7 @@
 # 2008-08-26 Yuki Naito (@meso_cacase)
 # 2023-07-10 Yuki Naito (@meso_cacase) Version 2.1
 
-use warnings ;
+use warnings ; no warnings qw(once) ;
 use strict ;
 use FindBin ;                     # perl 5.26以降はカレントディレクトリはlibrary pathに含まれないので追加する
 use lib $FindBin::Bin ;

@@ -181,7 +181,7 @@ return $offtargetlist_table ;
 # 第2キー：strand、plusが優先（文字列で降順ソート）
 # 第3キー：patternで文字列昇順
 #================================================================
-sub parse_ggg_txt_for_si (){
+sub parse_ggg_txt_for_si {
 	my @lines = split("\n", shift) ;
 	my %strandDist2cnt = () ;
 	my %strandDistSymbolAlign2cnt = () ;
